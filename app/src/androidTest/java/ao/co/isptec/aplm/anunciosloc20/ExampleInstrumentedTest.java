@@ -1,4 +1,4 @@
-package ao.co.isptec.aplm.anunciosloc;
+package ao.co.isptec.aplm.anunciosloc20;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("ao.co.isptec.aplm.anunciosloc", appContext.getPackageName());
+        assertEquals("ao.co.isptec.aplm.anunciosloc20", appContext.getPackageName());
     }
 }

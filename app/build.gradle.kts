@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "ao.co.isptec.aplm.anunciosloc"
+    namespace = "ao.co.isptec.aplm.anunciosloc20"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "ao.co.isptec.aplm.anunciosloc"
+        applicationId = "ao.co.isptec.aplm.anunciosloc20"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Anuncios Loc"
+rootProject.name = "Anuncios Loc 2.0"
 include(":app")
- 

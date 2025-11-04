@@ -1,4 +1,4 @@
-package ao.co.isptec.aplm.anunciosloc;
+package ao.co.isptec.aplm.anunciosloc20;
 
 import org.junit.Test;
 
