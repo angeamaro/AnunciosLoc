@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item
+        android:id="@+id/menu_perfil"
+        android:title="Perfil"
+        android:icon="@drawable/ic_profile" />
+    
+    <item
+        android:id="@+id/menu_definicoes"
+        android:title="Definições"
+        android:icon="@drawable/ic_settings" />
+    
+    <item
+        android:id="@+id/menu_interesses"
+        android:title="Interesses"
+        android:icon="@drawable/ic_favorite" />
+    
+    <item
+        android:id="@+id/menu_politicas"
+        android:title="Políticas"
+        android:icon="@drawable/ic_policy" />
+    
+    <item
+        android:id="@+id/menu_sair"
+        android:title="Sair"
+        android:icon="@drawable/ic_logout" />
+    
+</menu>

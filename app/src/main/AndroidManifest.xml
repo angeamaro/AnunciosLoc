@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissões -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,23 +19,58 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AnunciosLoc">
+        
+        <!-- Splash Screen (Launcher) -->
         <activity
             android:name=".SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.AnunciosLoc">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false" />
+        
+        <!-- Authentication Activities -->
+        <activity
+            android:name=".ui.view.LoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        
+        <activity
+            android:name=".ui.view.RegisterActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        
+        <activity
+            android:name=".ui.view.ForgotPasswordActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        
+        <!-- Location Activities -->
+        <activity
+            android:name=".ui.view.AddLocationActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".MainActivity" />
+        
+        <!-- Announcement Activities -->
+        <activity
+            android:name=".ui.view.CreateAnnouncementActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".MainActivity" />
+        
+        <activity
+            android:name=".ui.view.AnnouncementDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        
     </application>
 
 </manifest>

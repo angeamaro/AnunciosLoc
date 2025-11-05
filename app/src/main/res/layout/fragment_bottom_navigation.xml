@@ -1,52 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:orientation="horizontal"
-    android:gravity="center"
-    android:padding="8dp"
-    android:background="@drawable/bottom_nav_bg"
-    android:elevation="10dp">
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingBottom="24dp"
+    android:paddingHorizontal="16dp"
+    android:background="@drawable/bg_bottom_nav"
+    android:elevation="16dp">
 
-    <ImageButton
-        android:id="@+id/btnHome"
-        android:layout_width="wrap_content"
+    <!-- Container Linear para os 5 botões -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_home"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Home" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:baselineAligned="false">
 
-    <ImageButton
-        android:id="@+id/btnAnuncios"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_announcement"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Anúncios" />
+        <!-- Home -->
+        <LinearLayout
+            android:id="@+id/layoutHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
 
-    <ImageButton
-        android:id="@+id/btnAdd"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/ic_add"
-        android:background="@drawable/bg_circle_blue"
-        android:layout_marginHorizontal="20dp"
-        android:contentDescription="Novo anúncio" />
+            <ImageButton
+                android:id="@+id/btnHome"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_home"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Home"
+                app:tint="@color/gray_400" />
 
-    <ImageButton
-        android:id="@+id/btnNotifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_notifications"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Notificações" />
+            <TextView
+                android:id="@+id/txtHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textSize="10sp"
+                android:textColor="@color/gray_400"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/btnProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_profile"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Perfil" />
+        <!-- Anúncios -->
+        <LinearLayout
+            android:id="@+id/layoutAnuncios"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
 
-</LinearLayout>
+            <ImageButton
+                android:id="@+id/btnAnuncios"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_announcement"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Anúncios"
+                app:tint="@color/gray_400" />
+
+            <TextView
+                android:id="@+id/txtAnuncios"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Anúncios"
+                android:textSize="10sp"
+                android:textColor="@color/gray_400"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Botão Central (Criar) - Elevado -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnAdd"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_add_white"
+                android:contentDescription="Criar Anúncio"
+                app:tint="@color/white"
+                app:fabSize="normal"
+                app:backgroundTint="@color/blue_600"
+                app:elevation="12dp"
+                app:borderWidth="0dp"
+                app:rippleColor="@color/blue_700"
+                app:maxImageSize="24dp" />
+        </RelativeLayout>
+
+        <!-- Notificações -->
+        <LinearLayout
+            android:id="@+id/layoutNotifications"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/btnNotifications"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_notifications"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Notificações"
+                app:tint="@color/gray_400" />
+
+            <TextView
+                android:id="@+id/txtNotifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notificações"
+                android:textSize="10sp"
+                android:textColor="@color/gray_400"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Locais -->
+        <LinearLayout
+            android:id="@+id/layoutProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/btnProfile"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_location"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Locais"
+                app:tint="@color/gray_400" />
+
+            <TextView
+                android:id="@+id/txtProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Locais"
+                android:textSize="10sp"
+                android:textColor="@color/gray_400"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

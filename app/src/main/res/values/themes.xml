@@ -6,4 +6,16 @@
     </style>
 
     <style name="Theme.AnunciosLoc" parent="Base.Theme.AnunciosLoc" />
+    
+    <!-- Bottom Navigation Text Styles -->
+    <style name="BottomNavTextActive" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">4dp</item>
+    </style>
+    
+    <style name="BottomNavTextInactive" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">11sp</item>
+        <item name="android:paddingTop">4dp</item>
+    </style>
 </resources>

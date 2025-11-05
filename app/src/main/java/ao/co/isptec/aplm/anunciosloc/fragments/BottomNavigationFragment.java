@@ -1,5 +1,6 @@
 package ao.co.isptec.aplm.anunciosloc.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import ao.co.isptec.aplm.anunciosloc.MainActivity;
 import ao.co.isptec.aplm.anunciosloc.R;
 
 public class BottomNavigationFragment extends Fragment {
@@ -22,21 +25,44 @@ public class BottomNavigationFragment extends Fragment {
         // Referenciar os botões
         ImageButton btnHome = view.findViewById(R.id.btnHome);
         ImageButton btnAnuncios = view.findViewById(R.id.btnAnuncios);
-        ImageButton btnAdd = view.findViewById(R.id.btnAdd);
+        FloatingActionButton btnAdd = view.findViewById(R.id.btnAdd);
         ImageButton btnNotifications = view.findViewById(R.id.btnNotifications);
         ImageButton btnProfile = view.findViewById(R.id.btnProfile);
 
-        // Exemplo: ações simples
-        btnHome.setOnClickListener(v ->
-                showToast("Home clicado"));
-        btnAnuncios.setOnClickListener(v ->
-                showToast("Anúncios clicado"));
-        btnAdd.setOnClickListener(v ->
-                showToast("Adicionar novo anúncio"));
-        btnNotifications.setOnClickListener(v ->
-                showToast("Notificações clicado"));
-        btnProfile.setOnClickListener(v ->
-                showToast("Perfil clicado"));
+        // Configurar ações dos botões
+        btnHome.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).navigateToHome();
+            }
+        });
+        
+        btnAnuncios.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).navigateToHome();
+            }
+        });
+        
+        btnAdd.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(getContext(), ao.co.isptec.aplm.anunciosloc.ui.view.CreateAnnouncementActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                showToast("Erro ao abrir tela de criação");
+            }
+        });
+        
+        btnNotifications.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).navigateToNotifications();
+            }
+        });
+        
+        btnProfile.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).navigateToLocations();
+            }
+        });
 
         return view;
     }

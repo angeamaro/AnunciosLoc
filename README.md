@@ -63,6 +63,26 @@ To develop a distributed mobile application that enhances community interaction 
 
 ---
 
+## 🧪 Testes e Credenciais
+
+### 👤 Usuários de Teste (Mock)
+
+O aplicativo possui 3 usuários pré-configurados para testes rápidos:
+
+| Email | Senha | Nome | Perfil |
+|-------|-------|------|--------|
+| `alice@example.com` | `123456` | Alice Silva | Estudante, Benfica, Tecnologia |
+| `bob@example.com` | `123456` | Bob Santos | Professor, Porto, Educação |
+| `carol@example.com` | `123456` | Carol Lima | Estudante, Sporting, Desporto |
+
+**Login Rápido Recomendado:**
+- Email: `alice@example.com`
+- Senha: `123456`
+
+> ⚠️ **Nota:** Este é um projeto acadêmico com backend mockado. Todos os dados são simulados e armazenados apenas em memória.
+
+---
+
 ## 📁 Project Structure
 
 ```

@@ -1,81 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginBottom="12dp"
-    android:background="@drawable/card_bg"
-    android:elevation="4dp"
-    android:clipToOutline="true">
+    android:layout_margin="8dp"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:contentPadding="16dp"
+    app:strokeWidth="0dp">
 
-    <!-- Linha superior: título + botão "Ver" -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textTitle"
-            android:layout_width="0dp"
+        <!-- Header: Status + Options -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Título do anúncio"
-            android:textColor="#1E293B"
-            android:textStyle="bold"
-            android:textSize="16sp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
 
+            <ImageView
+                android:id="@+id/imgStatus"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/dot"
+                android:contentDescription="Status"
+                app:tint="@color/success" />
+
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Título do Anúncio"
+                android:textColor="@color/gray_900"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <ImageView
+                android:id="@+id/imgOptions"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_more_vert"
+                android:contentDescription="@string/options"
+                app:tint="@color/gray_500"
+                android:padding="2dp" />
+        </LinearLayout>
+
+        <!-- Content -->
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+            android:id="@+id/txtContent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ver"
-            android:textColor="@color/blue_600"
+            android:text="Conteúdo do anúncio..."
+            android:textColor="@color/gray_700"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true" />
-    </LinearLayout>
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:layout_marginBottom="8dp" />
 
-    <!-- Conteúdo do anúncio -->
-    <TextView
-        android:id="@+id/textContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Conteúdo breve do anúncio..."
-        android:textColor="#475569"
-        android:textSize="14sp"
-        android:layout_marginTop="6dp"
-        android:maxLines="2"
-        android:ellipsize="end" />
-
-    <!-- Linha inferior: localização + data -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical">
-
-        <!-- Localização -->
+        <!-- Author -->
         <TextView
-            android:id="@+id/textLocation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Luanda"
-            android:textColor="#6B7280"
-            android:textSize="12sp" />
-
-        <!-- Data -->
-        <TextView
-            android:id="@+id/textDate"
+            android:id="@+id/txtAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" 30/10/2025"
-            android:textColor="#9CA3AF"
-            android:textSize="12sp" />
+            android:text="Por: João Silva"
+            android:textColor="@color/gray_600"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Location -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_location_on"
+                android:contentDescription="Localização"
+                app:tint="@color/purple_600" />
+
+            <TextView
+                android:id="@+id/txtLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Largo da Independência"
+                android:textColor="@color/purple_600"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Footer: Date + Time Remaining + Views -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Hoje às 14:30"
+                android:textColor="@color/gray_500"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txtTimeRemaining"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expira em 2h"
+                android:textColor="@color/orange_600"
+                android:textSize="11sp"
+                android:layout_marginEnd="8dp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/txtViewCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="125 visualizações"
+                android:textColor="@color/gray_500"
+                android:textSize="11sp" />
+        </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
