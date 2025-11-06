@@ -9,12 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.card.MaterialCardView;
 
-import ao.co.isptec.aplm.anunciosloc.ui.view.MainActivity;
 import ao.co.isptec.aplm.anunciosloc.R;
-import ao.co.isptec.aplm.anunciosloc.activities.ProfileActivity;
-import ao.co.isptec.aplm.anunciosloc.activities.SettingsActivity;
-import ao.co.isptec.aplm.anunciosloc.activities.InterestsActivity;
-import ao.co.isptec.aplm.anunciosloc.ui.view.activities.PoliciesActivity;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
 
 /**

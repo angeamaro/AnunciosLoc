@@ -59,16 +59,19 @@
 
         <!-- Profile, Settings, and Password -->
         <activity
-            android:name=".activities.ProfileActivity"
-            android:exported="false" />
+            android:name=".ui.view.ProfileActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MenuOptionsActivity" />
 
         <activity
-            android:name=".activities.ChangePasswordActivity"
-            android:exported="false" />
+            android:name=".ui.view.ChangePasswordActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.ProfileActivity" />
 
         <activity
-            android:name=".activities.SettingsActivity"
-            android:exported="false" />
+            android:name=".ui.view.SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MenuOptionsActivity" />
 
         
         <!-- Location Activities -->

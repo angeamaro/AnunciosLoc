@@ -1,4 +1,4 @@
-package ao.co.isptec.aplm.anunciosloc.activities;
+package ao.co.isptec.aplm.anunciosloc.ui.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import ao.co.isptec.aplm.anunciosloc.R;
-import ao.co.isptec.aplm.anunciosloc.ui.view.activities.PoliciesActivity;
 
 public class SettingsActivity extends AppCompatActivity {
 

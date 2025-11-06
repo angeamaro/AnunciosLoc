@@ -1,4 +1,4 @@
-package ao.co.isptec.aplm.anunciosloc.activities;
+package ao.co.isptec.aplm.anunciosloc.ui.view;
 
 import android.content.Intent;
 import android.os.Bundle;
