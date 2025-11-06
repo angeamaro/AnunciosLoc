@@ -2,12 +2,10 @@ package ao.co.isptec.aplm.anunciosloc.ui.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,31 +13,31 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ao.co.isptec.aplm.anunciosloc.R;
-import ao.co.isptec.aplm.anunciosloc.data.model.User;
-import ao.co.isptec.aplm.anunciosloc.ui.adapter.UserSelectionAdapter;
-import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.UserViewModel;
+import ao.co.isptec.aplm.anunciosloc.data.model.PolicyFilter;
+import ao.co.isptec.aplm.anunciosloc.ui.adapter.ProfileAttributeAdapter;
 import ao.co.isptec.aplm.anunciosloc.utils.Constants;
 
 /**
- * Activity para configurar regras de whitelist/blacklist
+ * Activity para configurar regras de whitelist/blacklist baseadas em atributos de perfil
  */
 public class ConfigurePolicyActivity extends AppCompatActivity {
     
     public static final String EXTRA_POLICY_TYPE = "policy_type";
-    public static final String EXTRA_SELECTED_KEYS = "selected_keys";
+    public static final String EXTRA_POLICY_FILTER = "policy_filter";
     
     private MaterialToolbar toolbar;
-    private RecyclerView recyclerViewUsers;
-    private ProgressBar progressBar;
+    private TextView tvDescription;
+    private RecyclerView recyclerViewAttributes;
     private MaterialButton btnConfirm;
     
-    private UserViewModel userViewModel;
-    private UserSelectionAdapter adapter;
+    private ProfileAttributeAdapter adapter;
     private String policyType;
-    private List<String> selectedKeys = new ArrayList<>();
+    private Map<String, String> selectedAttributes = new HashMap<>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,32 +50,24 @@ public class ConfigurePolicyActivity extends AppCompatActivity {
             policyType = Constants.DELIVERY_POLICY_WHITELIST;
         }
         
-        // Recupera chaves previamente selecionadas (se houver)
-        ArrayList<String> previousKeys = getIntent().getStringArrayListExtra(EXTRA_SELECTED_KEYS);
-        if (previousKeys != null) {
-            selectedKeys = new ArrayList<>(previousKeys);
+        // Recupera filtro previamente configurado (se houver)
+        PolicyFilter previousFilter = (PolicyFilter) getIntent().getSerializableExtra(EXTRA_POLICY_FILTER);
+        if (previousFilter != null && previousFilter.getAttributes() != null) {
+            selectedAttributes = new HashMap<>(previousFilter.getAttributes());
         }
         
         initializeViews();
-        initializeViewModel();
         setupToolbar();
         setupRecyclerView();
         setupListeners();
-        observeViewModel();
-        
-        // Carrega os usuários
-        userViewModel.loadAllUsers();
+        loadAvailableAttributes();
     }
     
     private void initializeViews() {
         toolbar = findViewById(R.id.toolbar);
-        recyclerViewUsers = findViewById(R.id.recyclerViewUsers);
-        progressBar = findViewById(R.id.progressBar);
+        tvDescription = findViewById(R.id.tvDescription);
+        recyclerViewAttributes = findViewById(R.id.recyclerViewAttributes);
         btnConfirm = findViewById(R.id.btnConfirm);
-    }
-    
-    private void initializeViewModel() {
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
     
     private void setupToolbar() {
@@ -92,58 +82,108 @@ public class ConfigurePolicyActivity extends AppCompatActivity {
         }
         
         toolbar.setNavigationOnClickListener(v -> finish());
+        
+        // Atualiza descrição
+        String description = policyType.equals(Constants.DELIVERY_POLICY_WHITELIST)
+            ? "Selecione os atributos de perfil que os usuários devem ter para receber este anúncio"
+            : "Selecione os atributos de perfil que impedirão usuários de receber este anúncio";
+        tvDescription.setText(description);
     }
     
     private void setupRecyclerView() {
-        adapter = new UserSelectionAdapter(
-            new ArrayList<>(), 
-            selectedKeys,
-            policyType.equals(Constants.DELIVERY_POLICY_WHITELIST)
-        );
+        adapter = new ProfileAttributeAdapter();
+        adapter.setSelectedAttributes(selectedAttributes);
         
-        recyclerViewUsers.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewUsers.setAdapter(adapter);
+        recyclerViewAttributes.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewAttributes.setAdapter(adapter);
     }
     
     private void setupListeners() {
         btnConfirm.setOnClickListener(v -> {
-            selectedKeys = adapter.getSelectedKeys();
+            selectedAttributes = adapter.getSelectedAttributes();
             
-            if (selectedKeys.isEmpty()) {
+            if (selectedAttributes.isEmpty()) {
                 String message = policyType.equals(Constants.DELIVERY_POLICY_WHITELIST)
-                    ? "Selecione pelo menos um usuário para permitir"
-                    : "Selecione pelo menos um usuário para bloquear";
+                    ? "Selecione pelo menos um atributo para a whitelist"
+                    : "Selecione pelo menos um atributo para a blacklist";
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 return;
             }
             
-            // Retorna as chaves selecionadas
+            // Cria o filtro de política
+            PolicyFilter filter = new PolicyFilter(policyType);
+            filter.setAttributes(selectedAttributes);
+            
+            // Retorna o filtro
             Intent resultIntent = new Intent();
-            resultIntent.putStringArrayListExtra(EXTRA_SELECTED_KEYS, new ArrayList<>(selectedKeys));
+            resultIntent.putExtra(EXTRA_POLICY_FILTER, filter);
             setResult(RESULT_OK, resultIntent);
             finish();
         });
     }
     
-    private void observeViewModel() {
-        // Observa lista de usuários
-        userViewModel.getAllUsers().observe(this, users -> {
-            if (users != null && !users.isEmpty()) {
-                adapter.updateUsers(users);
-            }
-        });
+    /**
+     * Carrega os atributos de perfil disponíveis para seleção
+     */
+    private void loadAvailableAttributes() {
+        List<ProfileAttributeAdapter.ProfileAttribute> attributes = new ArrayList<>();
         
-        // Observa estado de carregamento
-        userViewModel.getIsLoading().observe(this, isLoading -> {
-            progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            recyclerViewUsers.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-        });
+        // Interesses
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "interesse", "Tecnologia", "Tecnologia"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "interesse", "Desporto", "Desporto"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "interesse", "Música", "Música"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "interesse", "Arte", "Arte"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "interesse", "Ciência", "Ciência"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "interesse", "Culinária", "Culinária"));
         
-        // Observa erros
-        userViewModel.getErrorMessage().observe(this, error -> {
-            if (error != null && !error.isEmpty()) {
-                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-            }
-        });
+        // Profissões
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "profissao", "Estudante", "Estudante"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "profissao", "Professor", "Professor"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "profissao", "Engenheiro", "Engenheiro"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "profissao", "Médico", "Médico"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "profissao", "Empresário", "Empresário"));
+        
+        // Clubes
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "clube", "Benfica", "Benfica"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "clube", "Porto", "Porto"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "clube", "Sporting", "Sporting"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "clube", "1º de Agosto", "1º de Agosto"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "clube", "Petro de Luanda", "Petro de Luanda"));
+        
+        // Idade (faixas etárias)
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "faixa_etaria", "18-24", "18-24 anos"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "faixa_etaria", "25-34", "25-34 anos"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "faixa_etaria", "35-44", "35-44 anos"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "faixa_etaria", "45+", "45+ anos"));
+        
+        // Cidade
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "cidade", "Luanda", "Luanda"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "cidade", "Benguela", "Benguela"));
+        attributes.add(new ProfileAttributeAdapter.ProfileAttribute(
+            "cidade", "Huambo", "Huambo"));
+        
+        adapter.setAttributes(attributes);
     }
 }

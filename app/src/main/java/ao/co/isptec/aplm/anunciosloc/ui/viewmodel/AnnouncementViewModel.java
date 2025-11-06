@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import ao.co.isptec.aplm.anunciosloc.data.model.Announcement;
+import ao.co.isptec.aplm.anunciosloc.data.model.PolicyFilter;
 import ao.co.isptec.aplm.anunciosloc.data.model.User;
 import ao.co.isptec.aplm.anunciosloc.data.repository.AnnouncementRepository;
 import ao.co.isptec.aplm.anunciosloc.data.repository.UserRepository;
@@ -189,16 +190,16 @@ public class AnnouncementViewModel extends ViewModel {
      */
     public void createAnnouncement(String title, String content, String locationId, 
                                    long startDate, long endDate, String deliveryPolicy, 
-                                   List<String> policyKeys) {
-        // Converte chaves de política em PolicyRules
+                                   PolicyFilter policyFilter) {
+        // Converte PolicyFilter em PolicyRules
         List<ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule> policyRules = null;
-        if (policyKeys != null && !policyKeys.isEmpty()) {
+        if (policyFilter != null && !policyFilter.isEmpty()) {
             policyRules = new java.util.ArrayList<>();
-            for (String key : policyKeys) {
+            for (java.util.Map.Entry<String, String> entry : policyFilter.getAttributes().entrySet()) {
                 ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule rule = 
                     new ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule();
-                rule.setAttributeKey("publicKey");
-                rule.setAttributeValue(key);
+                rule.setAttributeKey(entry.getKey());
+                rule.setAttributeValue(entry.getValue());
                 policyRules.add(rule);
             }
         }

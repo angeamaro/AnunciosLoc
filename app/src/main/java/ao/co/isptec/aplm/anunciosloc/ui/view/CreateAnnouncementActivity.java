@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.data.model.Location;
+import ao.co.isptec.aplm.anunciosloc.data.model.PolicyFilter;
 import ao.co.isptec.aplm.anunciosloc.data.repository.UserRepository;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.AnnouncementViewModel;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.LocationViewModel;
@@ -64,7 +65,7 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
     private long startDateTimestamp = 0;
     private long endDateTimestamp = 0;
     private String selectedPolicy = Constants.DELIVERY_POLICY_EVERYONE;
-    private List<String> policyKeys = new ArrayList<>();
+    private PolicyFilter policyFilter;
     
     private ActivityResultLauncher<Intent> createLocationLauncher;
     private ActivityResultLauncher<Intent> configurePolicyLauncher;
@@ -91,17 +92,19 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    ArrayList<String> selectedKeys = result.getData().getStringArrayListExtra(ConfigurePolicyActivity.EXTRA_SELECTED_KEYS);
-                    if (selectedKeys != null) {
-                        policyKeys = selectedKeys;
+                    PolicyFilter filter = (PolicyFilter) result.getData().getSerializableExtra(ConfigurePolicyActivity.EXTRA_POLICY_FILTER);
+                    if (filter != null && !filter.isEmpty()) {
+                        policyFilter = filter;
+                        String attributes = filter.toString();
                         String message = selectedPolicy.equals(Constants.DELIVERY_POLICY_WHITELIST)
-                            ? "Whitelist configurada: " + policyKeys.size() + " usuários"
-                            : "Blacklist configurada: " + policyKeys.size() + " usuários";
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                            ? "Whitelist: " + attributes
+                            : "Blacklist: " + attributes;
+                        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                     }
                 }
             }
         );
+
         
         initializeViews();
         initializeViewModels();
@@ -228,7 +231,9 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
         btnConfigurePolicy.setOnClickListener(v -> {
             Intent intent = new Intent(this, ConfigurePolicyActivity.class);
             intent.putExtra(ConfigurePolicyActivity.EXTRA_POLICY_TYPE, selectedPolicy);
-            intent.putStringArrayListExtra(ConfigurePolicyActivity.EXTRA_SELECTED_KEYS, new ArrayList<>(policyKeys));
+            if (policyFilter != null) {
+                intent.putExtra(ConfigurePolicyActivity.EXTRA_POLICY_FILTER, policyFilter);
+            }
             configurePolicyLauncher.launch(intent);
         });
         
@@ -453,7 +458,7 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
             startDateTimestamp,
             endDateTimestamp,
             selectedPolicy,
-            policyKeys
+            policyFilter
         );
     }
 }

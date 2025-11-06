@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/gray_bg">
+    android:background="@color/background_color">
 
     <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/bg_gradient_blue_purple"
+        android:background="@color/blue_primary"
         android:elevation="4dp"
         app:titleTextColor="@color/white"
         app:navigationIconTint="@color/white" />
@@ -21,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        android:backgroundTint="@color/blue_50">
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/card_background">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,11 +32,20 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/txtDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Selecione os usuários que poderão receber este anúncio. Apenas dispositivos com as chaves públicas selecionadas receberão a mensagem."
-                android:textColor="@color/blue_900"
+                android:text="Configuração de Política"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selecione os atributos de perfil que os usuários devem ter"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp"
                 android:lineSpacingMultiplier="1.3" />
 
@@ -44,39 +53,25 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Lista de Usuários -->
-    <FrameLayout
+    <!-- Lista de Atributos -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Atributos de Perfil Disponíveis"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAttributes"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginHorizontal="16dp">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewUsers"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:indeterminateTint="@color/blue_600" />
-
-        <TextView
-            android:id="@+id/txtEmpty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Nenhum usuário encontrado"
-            android:textColor="@color/gray_500"
-            android:textSize="16sp"
-            android:visibility="gone" />
-
-    </FrameLayout>
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
 
     <!-- Botão Confirmar -->
     <com.google.android.material.button.MaterialButton
@@ -87,10 +82,8 @@
         android:text="Confirmar Seleção"
         android:textSize="16sp"
         android:textColor="@color/white"
-        app:backgroundTint="@color/blue_600"
-        app:cornerRadius="12dp"
-        app:icon="@drawable/ic_check"
-        app:iconGravity="textStart"
-        app:iconTint="@color/white" />
+        android:textStyle="bold"
+        app:backgroundTint="@color/blue_primary"
+        app:cornerRadius="12dp" />
 
 </LinearLayout>
