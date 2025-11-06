@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="Por que adicionar dados?"
                 android:textStyle="bold"
-                android:textColor="@drawable/bg_gradient_blue"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:layout_marginBottom="4dp"/>
 
@@ -108,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:text="Esses dados ajudam a personalizar sua experiência, tornando o aplicativo mais inteligente e relevante."
                 android:textSize="14sp"
-                android:textColor="@drawable/bg_gradient_blue" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <!-- Campos de entrada -->
@@ -121,6 +121,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/edittext_bg"
             android:padding="12dp"
+            android:textColor="@android:color/black"
             android:inputType="textCapWords" />
 
         <EditText
@@ -132,6 +133,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/edittext_bg"
             android:padding="12dp"
+            android:textColor="@android:color/black"
             android:inputType="textCapWords" />
 
         <!-- Botão -->

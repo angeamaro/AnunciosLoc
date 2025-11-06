@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,11 +25,17 @@ public class InterestsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interests);
 
+        // Inicializar views
         editChave = findViewById(R.id.editChave);
         editValor = findViewById(R.id.editValor);
         listaPares = findViewById(R.id.listaPares);
         Button btnSalvar = findViewById(R.id.btnSalvar);
+        ImageView btnVoltar = findViewById(R.id.btnVoltar);
 
+        // Botão voltar
+        btnVoltar.setOnClickListener(v -> finish());
+
+        // Botão salvar par chave-valor
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
