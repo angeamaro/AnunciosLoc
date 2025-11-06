@@ -1,75 +1,66 @@
 package ao.co.isptec.aplm.anunciosloc.ui.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import java.util.LinkedHashMap;
+
 import ao.co.isptec.aplm.anunciosloc.R;
-import ao.co.isptec.aplm.anunciosloc.ui.adapter.InterestCategoryAdapter;
-import ao.co.isptec.aplm.anunciosloc.data.InterestsData;
-import ao.co.isptec.aplm.anunciosloc.data.model.InterestCategory;
-import java.util.List;
 
 public class InterestsActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerCategories;
-    private LinearLayout emptyState;
-    private InterestCategoryAdapter adapter;
-    private List<InterestCategory> categories;
+    private EditText editChave, editValor;
+    private LinearLayout listaPares;
+    private LinkedHashMap<String, String> pares = new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interests);
 
-        initializeViews();
-        setupRecyclerView();
-        loadCategories();
-    }
+        editChave = findViewById(R.id.editChave);
+        editValor = findViewById(R.id.editValor);
+        listaPares = findViewById(R.id.listaPares);
+        Button btnSalvar = findViewById(R.id.btnSalvar);
 
-    private void initializeViews() {
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        recyclerCategories = findViewById(R.id.recyclerCategories);
-        emptyState = findViewById(R.id.emptyState);
+        btnSalvar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String chave = editChave.getText().toString().trim();
+                String valor = editValor.getText().toString().trim();
 
-        btnBack.setOnClickListener(v -> onBackPressed());
-    }
-
-    private void setupRecyclerView() {
-        adapter = new InterestCategoryAdapter(category -> {
-            // Open values screen
-            Intent intent = new Intent(InterestsActivity.this, InterestValuesActivity.class);
-            intent.putExtra("category_id", category.getId());
-            intent.putExtra("category_name", category.getName());
-            intent.putStringArrayListExtra("category_values", 
-                    new java.util.ArrayList<>(category.getValues()));
-            startActivity(intent);
+                if (!chave.isEmpty() && !valor.isEmpty()) {
+                    pares.put(chave, valor);
+                    atualizarLista();
+                    editChave.setText("");
+                    editValor.setText("");
+                }
+            }
         });
-
-        recyclerCategories.setLayoutManager(new LinearLayoutManager(this));
-        recyclerCategories.setAdapter(adapter);
     }
 
-    private void loadCategories() {
-        categories = InterestsData.getPredefinedInterests();
-        
-        if (categories.isEmpty()) {
-            recyclerCategories.setVisibility(View.GONE);
-            emptyState.setVisibility(View.VISIBLE);
-        } else {
-            recyclerCategories.setVisibility(View.VISIBLE);
-            emptyState.setVisibility(View.GONE);
-            adapter.setCategories(categories);
+    private void atualizarLista() {
+        listaPares.removeAllViews();
+
+        for (String chave : pares.keySet()) {
+            TextView chip = new TextView(this);
+            chip.setText(chave + " : " + pares.get(chave));
+            chip.setBackgroundResource(R.drawable.edittext_bg);
+            chip.setPadding(24, 16, 24, 16);
+            chip.setTextColor(getColor(android.R.color.black));
+            chip.setTextSize(14);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(8, 8, 8, 8);
+            chip.setLayoutParams(params);
+            listaPares.addView(chip);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 }

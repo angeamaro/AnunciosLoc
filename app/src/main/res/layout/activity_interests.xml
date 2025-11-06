@@ -1,115 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:fillViewport="true"
+    tools:context=".ui.view.InterestsActivity">
 
-    <!-- Header com Gradiente -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_gradient_blue_purple"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:paddingTop="48dp"
-        android:paddingBottom="40dp">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentStart="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Voltar"
-            android:padding="6dp"
-            app:tint="@color/white" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Interesses"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:fontFamily="sans-serif-medium" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Selecione suas categorias"
-                android:textColor="#B3E0F7FF"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <!-- Content -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
-
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="220dp"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp"
+            android:background="@drawable/bg_gradient_blue">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CATEGORIAS DE INTERESSE"
-                android:textColor="@color/gray_600"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="12dp"
-                android:layout_marginStart="8dp" />
-
-            <!-- RecyclerView para categorias -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerCategories"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
-
-            <!-- Empty State -->
+            <!-- Linha da seta + texto "Voltar" -->
             <LinearLayout
-                android:id="@+id/emptyState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="48dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_favorite"
-                    android:alpha="0.3"
-                    app:tint="@color/gray_400" />
+                    android:id="@+id/btnVoltar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/back"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Nenhuma categoria disponível"
-                    android:textColor="@color/gray_600"
-                    android:textSize="16sp" />
+                    android:text="Voltar"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            <!-- Ícone do coração -->
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="25dp"
+                android:src="@drawable/ic_heart"
+                />
 
-</LinearLayout>
+            <!-- Título -->
+            <TextView
+                android:id="@+id/titulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meus Interesses"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:layout_marginTop="10dp"/>
+
+            <!-- Subtítulo -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Personalize a sua experiência"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+        <!-- Lista dos pares salvos -->
+        <LinearLayout
+            android:id="@+id/listaPares"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center"
+            android:layout_marginTop="-40dp"
+            android:background="@android:color/transparent" />
+
+        <!-- Caixa informativa -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#E9F2FF"
+            android:layout_margin="16dp"
+            android:elevation="2dp"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Por que adicionar dados?"
+                android:textStyle="bold"
+                android:textColor="@drawable/bg_gradient_blue"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Esses dados ajudam a personalizar sua experiência, tornando o aplicativo mais inteligente e relevante."
+                android:textSize="14sp"
+                android:textColor="@drawable/bg_gradient_blue" />
+        </LinearLayout>
+
+        <!-- Campos de entrada -->
+        <EditText
+            android:id="@+id/editChave"
+            android:hint="Chave (ex: Profissão)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edittext_bg"
+            android:padding="12dp"
+            android:inputType="textCapWords" />
+
+        <EditText
+            android:id="@+id/editValor"
+            android:hint="Valor (ex: Engenheiro)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edittext_bg"
+            android:padding="12dp"
+            android:inputType="textCapWords" />
+
+        <!-- Botão -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSalvar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salvar"
+            android:layout_margin="16dp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:padding="12dp"
+
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            app:backgroundTint="@null"
+            app:strokeColor="@null"
+            app:rippleColor="@android:color/transparent"
+            android:background="@drawable/royalblue"/>
+
+
+    </LinearLayout>
+</ScrollView>
