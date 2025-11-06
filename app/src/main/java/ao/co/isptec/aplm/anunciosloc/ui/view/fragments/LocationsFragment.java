@@ -36,7 +36,7 @@ public class LocationsFragment extends Fragment {
     private ProgressBar progressBar;
     private TextView txtEmpty;
     private FloatingActionButton fabAdd;
-    private ImageButton btnSettings;
+    private ImageButton btnMenu;
     
     private LocationViewModel viewModel;
     
@@ -66,8 +66,13 @@ public class LocationsFragment extends Fragment {
             progressBar = view.findViewById(R.id.progressBar);
             txtEmpty = view.findViewById(R.id.txtEmpty);
             fabAdd = view.findViewById(R.id.fabAdd);
-            btnSettings = view.findViewById(R.id.btnSettings);
+            btnMenu = view.findViewById(R.id.btnMenu);
+            
+            android.util.Log.d("LocationsFragment", "Views inicializadas:");
+            android.util.Log.d("LocationsFragment", "btnMenu: " + (btnMenu != null ? "OK" : "NULL"));
+            android.util.Log.d("LocationsFragment", "recyclerView: " + (recyclerView != null ? "OK" : "NULL"));
         } catch (Exception e) {
+            android.util.Log.e("LocationsFragment", "Erro em initializeViews", e);
             e.printStackTrace();
         }
     }
@@ -102,19 +107,43 @@ public class LocationsFragment extends Fragment {
     private void setupListeners() {
         try {
             if (fabAdd != null) {
+                android.util.Log.d("LocationsFragment", "fabAdd encontrado, configurando listener");
                 fabAdd.setOnClickListener(v -> {
-                    // Abrir AddLocationActivity em modo criação
-                    Intent intent = new Intent(getContext(), AddLocationActivity.class);
-                    startActivity(intent);
+                    android.util.Log.d("LocationsFragment", "fabAdd clicado!");
+                    try {
+                        // Abrir AddLocationActivity em modo criação
+                        Intent intent = new Intent(getContext(), AddLocationActivity.class);
+                        android.util.Log.d("LocationsFragment", "Intent criado, iniciando activity...");
+                        startActivity(intent);
+                        android.util.Log.d("LocationsFragment", "startActivity chamado");
+                    } catch (Exception e) {
+                        android.util.Log.e("LocationsFragment", "Erro ao abrir AddLocationActivity", e);
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Erro ao abrir tela de adicionar local", Toast.LENGTH_SHORT).show();
+                    }
                 });
+            } else {
+                android.util.Log.e("LocationsFragment", "fabAdd é null!");
             }
             
-            if (btnSettings != null) {
-                btnSettings.setOnClickListener(v -> {
-                    Toast.makeText(getContext(), "Definições - Em desenvolvimento", Toast.LENGTH_SHORT).show();
+            if (btnMenu != null) {
+                android.util.Log.d("LocationsFragment", "btnMenu encontrado, configurando listener");
+                btnMenu.setOnClickListener(v -> {
+                    android.util.Log.d("LocationsFragment", "btnMenu clicado!");
+                    try {
+                        Intent intent = new Intent(getContext(), ao.co.isptec.aplm.anunciosloc.ui.view.MenuOptionsActivity.class);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        android.util.Log.e("LocationsFragment", "Erro ao abrir menu", e);
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Erro ao abrir menu", Toast.LENGTH_SHORT).show();
+                    }
                 });
+            } else {
+                android.util.Log.e("LocationsFragment", "btnMenu é NULL!");
             }
         } catch (Exception e) {
+            android.util.Log.e("LocationsFragment", "Erro em setupListeners", e);
             e.printStackTrace();
         }
     }

@@ -1,5 +1,6 @@
 package ao.co.isptec.aplm.anunciosloc.ui.view.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,7 @@ public class NotificationsFragment extends Fragment {
     private ProgressBar progressBar;
     private TextView txtEmpty;
     private MaterialButton btnMarkAllRead;
-    private ImageButton btnSettings;
+    private ImageButton btnMenu;
     
     private NotificationViewModel viewModel;
     
@@ -67,8 +68,13 @@ public class NotificationsFragment extends Fragment {
             progressBar = view.findViewById(R.id.progressBar);
             txtEmpty = view.findViewById(R.id.txtEmpty);
             btnMarkAllRead = view.findViewById(R.id.btnMarkAllRead);
-            btnSettings = view.findViewById(R.id.btnSettings);
+            btnMenu = view.findViewById(R.id.btnMenu);
+            
+            android.util.Log.d("NotificationsFragment", "Views inicializadas:");
+            android.util.Log.d("NotificationsFragment", "btnMenu: " + (btnMenu != null ? "OK" : "NULL"));
+            android.util.Log.d("NotificationsFragment", "recyclerView: " + (recyclerView != null ? "OK" : "NULL"));
         } catch (Exception e) {
+            android.util.Log.e("NotificationsFragment", "Erro em initializeViews", e);
             e.printStackTrace();
         }
     }
@@ -86,12 +92,72 @@ public class NotificationsFragment extends Fragment {
             if (recyclerView == null) return;
             
             adapter = new NotificationAdapter(new ArrayList<>());
+            
+            // Listener para clique no card
             adapter.setOnNotificationClickListener(notification -> {
                 if (!notification.isRead()) {
-                    viewModel.markAsRead(notification.getId());
+                    // Marca como lida
+                    notification.setRead(true);
+                    adapter.notifyDataSetChanged();
+                    if (viewModel != null) {
+                        viewModel.markAsRead(notification.getId());
+                    }
                 }
-                // TODO: Abrir detalhe relacionado (anúncio, localização, etc)
-                Toast.makeText(getContext(), notification.getTitle(), Toast.LENGTH_SHORT).show();
+            });
+
+            // Listener para os botões de ação
+            adapter.setOnNotificationActionListener(new NotificationAdapter.OnNotificationActionListener() {
+                @Override
+                public void onViewNotification(ao.co.isptec.aplm.anunciosloc.data.model.Notification notification) {
+                    // Marca como lida ao ver
+                    if (!notification.isRead()) {
+                        notification.setRead(true);
+                        adapter.notifyDataSetChanged();
+                        if (viewModel != null) {
+                            viewModel.markAsRead(notification.getId());
+                        }
+                    }
+
+                    // Redireciona baseado no tipo de notificação
+                    try {
+                        if ("ANNOUNCEMENT".equals(notification.getType()) && notification.getRelatedId() != null) {
+                            // Abre detalhes do anúncio
+                            Intent intent = new Intent(getContext(), ao.co.isptec.aplm.anunciosloc.ui.view.AnnouncementDetailActivity.class);
+                            intent.putExtra(ao.co.isptec.aplm.anunciosloc.ui.view.AnnouncementDetailActivity.EXTRA_ANNOUNCEMENT_ID, notification.getRelatedId());
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(getContext(), "Ver: " + notification.getTitle(), Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Erro ao abrir detalhes", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onSaveNotification(ao.co.isptec.aplm.anunciosloc.data.model.Notification notification) {
+                    // Guarda o anúncio se for do tipo ANNOUNCEMENT
+                    if ("ANNOUNCEMENT".equals(notification.getType()) && notification.getRelatedId() != null) {
+                        try {
+                            // Salva no SharedPreferences
+                            android.content.SharedPreferences prefs = requireContext().getSharedPreferences("saved_announcements", android.content.Context.MODE_PRIVATE);
+                            java.util.Set<String> savedIds = prefs.getStringSet("saved_ids", new java.util.HashSet<>());
+                            java.util.Set<String> newSavedIds = new java.util.HashSet<>(savedIds);
+                            
+                            if (newSavedIds.add(notification.getRelatedId())) {
+                                prefs.edit().putStringSet("saved_ids", newSavedIds).apply();
+                                Toast.makeText(getContext(), "Anúncio guardado com sucesso", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Anúncio já estava guardado", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "Erro ao guardar anúncio", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Esta notificação não pode ser guardada", Toast.LENGTH_SHORT).show();
+                    }
+                }
             });
             
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -126,12 +192,24 @@ public class NotificationsFragment extends Fragment {
                 });
             }
             
-            if (btnSettings != null) {
-                btnSettings.setOnClickListener(v -> {
-                    Toast.makeText(getContext(), "Opções - Em desenvolvimento", Toast.LENGTH_SHORT).show();
+            if (btnMenu != null) {
+                android.util.Log.d("NotificationsFragment", "btnMenu encontrado, configurando listener");
+                btnMenu.setOnClickListener(v -> {
+                    android.util.Log.d("NotificationsFragment", "btnMenu clicado!");
+                    try {
+                        Intent intent = new Intent(getContext(), ao.co.isptec.aplm.anunciosloc.ui.view.MenuOptionsActivity.class);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        android.util.Log.e("NotificationsFragment", "Erro ao abrir menu", e);
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Erro ao abrir menu", Toast.LENGTH_SHORT).show();
+                    }
                 });
+            } else {
+                android.util.Log.e("NotificationsFragment", "btnMenu é NULL!");
             }
         } catch (Exception e) {
+            android.util.Log.e("NotificationsFragment", "Erro em setupListeners", e);
             e.printStackTrace();
         }
     }

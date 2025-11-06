@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +25,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     public List<Notification> notifications;
     private OnNotificationClickListener clickListener;
+    private OnNotificationActionListener actionListener;
 
     public interface OnNotificationClickListener {
         void onNotificationClick(Notification notification);
+    }
+
+    public interface OnNotificationActionListener {
+        void onViewNotification(Notification notification);
+        void onSaveNotification(Notification notification);
     }
 
     public NotificationAdapter(List<Notification> notifications) {
@@ -34,6 +42,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     public void setOnNotificationClickListener(OnNotificationClickListener listener) {
         this.clickListener = listener;
+    }
+
+    public void setOnNotificationActionListener(OnNotificationActionListener listener) {
+        this.actionListener = listener;
     }
 
     public void updateNotifications(List<Notification> newNotifications) {
@@ -92,10 +104,24 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.imgUnread.setVisibility(View.VISIBLE);
         }
         
-        // Click listener
+        // Click listener no card
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
                 clickListener.onNotificationClick(notification);
+            }
+        });
+
+        // Click listener no botão Ver
+        holder.btnView.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onViewNotification(notification);
+            }
+        });
+
+        // Click listener no botão Guardar
+        holder.btnSave.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onSaveNotification(notification);
             }
         });
     }
@@ -108,6 +134,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtTitle, txtMessage, txtTime;
         ImageView imgIcon, imgUnread;
+        MaterialButton btnView, btnSave;
         
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -116,6 +143,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             txtTime = itemView.findViewById(R.id.txtTime);
             imgIcon = itemView.findViewById(R.id.imgIcon);
             imgUnread = itemView.findViewById(R.id.imgUnread);
+            btnView = itemView.findViewById(R.id.btnView);
+            btnSave = itemView.findViewById(R.id.btnSave);
         }
     }
 }

@@ -2,6 +2,7 @@ package ao.co.isptec.aplm.anunciosloc.ui.view;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -10,6 +11,8 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -35,11 +38,21 @@ import ao.co.isptec.aplm.anunciosloc.utils.Constants;
  */
 public class CreateAnnouncementActivity extends AppCompatActivity {
     
+    private static final String KEY_TITLE = "saved_title";
+    private static final String KEY_CONTENT = "saved_content";
+    private static final String KEY_START_DATE = "saved_start_date";
+    private static final String KEY_END_DATE = "saved_end_date";
+    private static final String KEY_START_TIME = "saved_start_time";
+    private static final String KEY_END_TIME = "saved_end_time";
+    private static final String KEY_LOCATION_ID = "saved_location_id";
+    private static final String KEY_POLICY = "saved_policy";
+    
     private MaterialToolbar toolbar;
-    private TextInputEditText editTitle, editContent, editStartDate, editEndDate;
+    private TextInputEditText editTitle, editContent;
+    private TextInputEditText editStartDate, editEndDate, editStartTime, editEndTime;
     private AutoCompleteTextView spinnerLocation;
     private RadioGroup radioGroupPolicy;
-    private MaterialButton btnSave, btnConfigurePolicy;
+    private MaterialButton btnSave, btnConfigurePolicy, btnCreateLocation;
     private ProgressBar progressBar;
     
     private AnnouncementViewModel announcementViewModel;
@@ -52,10 +65,24 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
     private long endDateTimestamp = 0;
     private String selectedPolicy = Constants.DELIVERY_POLICY_EVERYONE;
     
+    private ActivityResultLauncher<Intent> createLocationLauncher;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_announcement);
+        
+        // Configurar o launcher para criar localização
+        createLocationLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    // Recarrega as localizações após criar uma nova
+                    loadLocations();
+                    Toast.makeText(this, "Localização criada com sucesso!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        );
         
         initializeViews();
         initializeViewModels();
@@ -63,6 +90,56 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
         setupListeners();
         observeViewModels();
         loadLocations();
+        
+        // Restaura dados salvos se houver
+        if (savedInstanceState != null) {
+            restoreInstanceState(savedInstanceState);
+        }
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+        // Salva o estado atual dos campos
+        if (editTitle.getText() != null) {
+            outState.putString(KEY_TITLE, editTitle.getText().toString());
+        }
+        if (editContent.getText() != null) {
+            outState.putString(KEY_CONTENT, editContent.getText().toString());
+        }
+        if (editStartDate.getText() != null) {
+            outState.putString(KEY_START_DATE, editStartDate.getText().toString());
+        }
+        if (editEndDate.getText() != null) {
+            outState.putString(KEY_END_DATE, editEndDate.getText().toString());
+        }
+        if (editStartTime.getText() != null) {
+            outState.putString(KEY_START_TIME, editStartTime.getText().toString());
+        }
+        if (editEndTime.getText() != null) {
+            outState.putString(KEY_END_TIME, editEndTime.getText().toString());
+        }
+        outState.putString(KEY_LOCATION_ID, selectedLocationId);
+        outState.putString(KEY_POLICY, selectedPolicy);
+    }
+    
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        String title = savedInstanceState.getString(KEY_TITLE);
+        String content = savedInstanceState.getString(KEY_CONTENT);
+        String startDate = savedInstanceState.getString(KEY_START_DATE);
+        String endDate = savedInstanceState.getString(KEY_END_DATE);
+        String startTime = savedInstanceState.getString(KEY_START_TIME);
+        String endTime = savedInstanceState.getString(KEY_END_TIME);
+        selectedLocationId = savedInstanceState.getString(KEY_LOCATION_ID);
+        selectedPolicy = savedInstanceState.getString(KEY_POLICY);
+        
+        if (title != null) editTitle.setText(title);
+        if (content != null) editContent.setText(content);
+        if (startDate != null) editStartDate.setText(startDate);
+        if (endDate != null) editEndDate.setText(endDate);
+        if (startTime != null) editStartTime.setText(startTime);
+        if (endTime != null) editEndTime.setText(endTime);
     }
     
     private void initializeViews() {
@@ -71,10 +148,13 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
         editContent = findViewById(R.id.editContent);
         editStartDate = findViewById(R.id.editStartDate);
         editEndDate = findViewById(R.id.editEndDate);
+        editStartTime = findViewById(R.id.editStartTime);
+        editEndTime = findViewById(R.id.editEndTime);
         spinnerLocation = findViewById(R.id.spinnerLocation);
         radioGroupPolicy = findViewById(R.id.radioGroupPolicy);
         btnSave = findViewById(R.id.btnSave);
         btnConfigurePolicy = findViewById(R.id.btnConfigurePolicy);
+        btnCreateLocation = findViewById(R.id.btnCreateLocation);
         progressBar = findViewById(R.id.progressBar);
         
         // Configuração inicial
@@ -99,8 +179,18 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
     
     private void setupListeners() {
         // Date pickers
-        editStartDate.setOnClickListener(v -> showDateTimePicker(true));
-        editEndDate.setOnClickListener(v -> showDateTimePicker(false));
+        editStartDate.setOnClickListener(v -> showDatePicker(true, true));
+        editEndDate.setOnClickListener(v -> showDatePicker(false, true));
+        
+        // Time pickers
+        editStartTime.setOnClickListener(v -> showTimePicker(true));
+        editEndTime.setOnClickListener(v -> showTimePicker(false));
+        
+        // Botão criar localização
+        btnCreateLocation.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AddLocationActivity.class);
+            createLocationLauncher.launch(intent);
+        });
         
         // Policy selection
         radioGroupPolicy.setOnCheckedChangeListener((group, checkedId) -> {
@@ -177,6 +267,57 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
         });
     }
     
+    private void showDatePicker(boolean isStartDate, boolean showTime) {
+        Calendar calendar = Calendar.getInstance();
+        
+        // Date picker
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+            this,
+            (view, year, month, dayOfMonth) -> {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                calendar.set(year, month, dayOfMonth);
+                String dateStr = sdf.format(calendar.getTime());
+                
+                if (isStartDate) {
+                    editStartDate.setText(dateStr);
+                } else {
+                    editEndDate.setText(dateStr);
+                }
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        );
+        
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        datePickerDialog.show();
+    }
+    
+    private void showTimePicker(boolean isStartTime) {
+        Calendar calendar = Calendar.getInstance();
+        
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+            this,
+            (view, hourOfDay, minute) -> {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                String timeStr = sdf.format(calendar.getTime());
+                
+                if (isStartTime) {
+                    editStartTime.setText(timeStr);
+                } else {
+                    editEndTime.setText(timeStr);
+                }
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            true
+        );
+        
+        timePickerDialog.show();
+    }
+    
     private void showDateTimePicker(boolean isStartDate) {
         Calendar calendar = Calendar.getInstance();
         
@@ -226,6 +367,10 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
         // Validações
         String title = editTitle.getText().toString().trim();
         String content = editContent.getText().toString().trim();
+        String startDateStr = editStartDate.getText().toString().trim();
+        String endDateStr = editEndDate.getText().toString().trim();
+        String startTimeStr = editStartTime.getText().toString().trim();
+        String endTimeStr = editEndTime.getText().toString().trim();
         
         if (title.isEmpty()) {
             editTitle.setError(getString(R.string.error_empty_field));
@@ -244,18 +389,38 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
             return;
         }
         
-        if (startDateTimestamp == 0) {
+        if (startDateStr.isEmpty()) {
             Toast.makeText(this, "Selecione a data de início", Toast.LENGTH_SHORT).show();
             return;
         }
         
-        if (endDateTimestamp == 0) {
+        if (startTimeStr.isEmpty()) {
+            Toast.makeText(this, "Selecione a hora de início", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        if (endDateStr.isEmpty()) {
             Toast.makeText(this, "Selecione a data de término", Toast.LENGTH_SHORT).show();
             return;
         }
         
-        if (endDateTimestamp <= startDateTimestamp) {
-            Toast.makeText(this, "A data de término deve ser posterior à data de início", Toast.LENGTH_SHORT).show();
+        if (endTimeStr.isEmpty()) {
+            Toast.makeText(this, "Selecione a hora de término", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Converte data e hora para timestamp
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            startDateTimestamp = sdf.parse(startDateStr + " " + startTimeStr).getTime();
+            endDateTimestamp = sdf.parse(endDateStr + " " + endTimeStr).getTime();
+            
+            if (endDateTimestamp <= startDateTimestamp) {
+                Toast.makeText(this, "A data de término deve ser posterior à data de início", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Erro ao processar as datas", Toast.LENGTH_SHORT).show();
             return;
         }
         

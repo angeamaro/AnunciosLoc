@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ao.co.isptec.aplm.anunciosloc.ui.view.LoginActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.view.fragments.AnnouncementsFragment;
+import ao.co.isptec.aplm.anunciosloc.ui.view.fragments.HomeFragment;
 import ao.co.isptec.aplm.anunciosloc.ui.view.fragments.LocationsFragment;
 import ao.co.isptec.aplm.anunciosloc.ui.view.fragments.NotificationsFragment;
 import ao.co.isptec.aplm.anunciosloc.ui.view.fragments.ProfileFragment;
@@ -54,10 +55,33 @@ public class MainActivity extends AppCompatActivity {
             setupBottomNavigation();
             setupBackPressHandler();
 
-            // Carrega fragment inicial (Home/Anúncios)
+            // Carrega fragment inicial (Home)
             if (savedInstanceState == null) {
-                loadFragment(new AnnouncementsFragment(), "home");
-                bottomNavigationView.setSelectedItemId(R.id.nav_home);
+                // Verifica se há navegação específica do Intent
+                String navigateTo = getIntent().getStringExtra("navigate_to");
+                if (navigateTo != null) {
+                    switch (navigateTo) {
+                        case "announcements":
+                            loadFragment(new AnnouncementsFragment(), "announcements");
+                            bottomNavigationView.setSelectedItemId(R.id.nav_announcements);
+                            break;
+                        case "notifications":
+                            loadFragment(new NotificationsFragment(), "notifications");
+                            bottomNavigationView.setSelectedItemId(R.id.nav_notifications);
+                            break;
+                        case "locations":
+                            loadFragment(new LocationsFragment(), "locations");
+                            bottomNavigationView.setSelectedItemId(R.id.nav_locations);
+                            break;
+                        default:
+                            loadFragment(new HomeFragment(), "home");
+                            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+                            break;
+                    }
+                } else {
+                    loadFragment(new HomeFragment(), "home");
+                    bottomNavigationView.setSelectedItemId(R.id.nav_home);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,10 +105,11 @@ public class MainActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.nav_home) {
-                    // Home mostra AnnouncementsFragment (feed principal)
-                    fragment = new AnnouncementsFragment();
+                    // Home mostra HomeFragment (Bem-vindo + Anúncios Recentes)
+                    fragment = new HomeFragment();
                     tag = "home";
                 } else if (itemId == R.id.nav_announcements) {
+                    // Anúncios mostra AnnouncementsFragment (Guardados/Todos)
                     fragment = new AnnouncementsFragment();
                     tag = "announcements";
                 } else if (itemId == R.id.nav_create) {

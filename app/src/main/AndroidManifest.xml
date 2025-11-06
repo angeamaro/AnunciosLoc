@@ -71,6 +71,23 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         
+        <!-- Menu Options Activity -->
+        <activity
+            android:name=".ui.view.MenuOptionsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        
+        <!-- Interests Activities -->
+        <activity
+            android:name=".activities.InterestsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MenuOptionsActivity" />
+        
+        <activity
+            android:name=".activities.InterestValuesActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.InterestsActivity" />
+        
     </application>
 
 </manifest>

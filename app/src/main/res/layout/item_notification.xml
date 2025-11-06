@@ -13,70 +13,125 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:orientation="vertical">
 
-        <!-- Icon -->
-        <ImageView
-            android:id="@+id/imgIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_notifications"
-            android:contentDescription="Tipo de notificação"
-            android:padding="12dp"
-            android:background="@drawable/bg_circle_blue"
-            app:tint="@color/blue_600" />
-
-        <!-- Content -->
+        <!-- Conteúdo Principal -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/txtTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Título da Notificação"
-                android:textColor="@color/gray_900"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end" />
+            <!-- Icon -->
+            <ImageView
+                android:id="@+id/imgIcon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_notifications"
+                android:contentDescription="Tipo de notificação"
+                android:padding="12dp"
+                android:background="@drawable/bg_circle_blue"
+                app:tint="@color/blue_600" />
 
-            <TextView
-                android:id="@+id/txtMessage"
-                android:layout_width="match_parent"
+            <!-- Content -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Mensagem da notificação..."
-                android:textColor="@color/gray_700"
-                android:textSize="14sp"
-                android:maxLines="2"
-                android:ellipsize="end" />
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Há 5 minutos"
-                android:textColor="@color/gray_500"
-                android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/txtTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Título da Notificação"
+                    android:textColor="@color/gray_900"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/txtMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Mensagem da notificação..."
+                    android:textColor="@color/gray_700"
+                    android:textSize="14sp"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/txtTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Há 5 minutos"
+                    android:textColor="@color/gray_500"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Unread Indicator -->
+            <ImageView
+                android:id="@+id/imgUnread"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/dot"
+                android:contentDescription="Não lida"
+                app:tint="@color/orange_600"
+                android:visibility="visible" />
+
         </LinearLayout>
 
-        <!-- Unread Indicator -->
-        <ImageView
-            android:id="@+id/imgUnread"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/dot"
-            android:contentDescription="Não lida"
-            app:tint="@color/orange_600"
-            android:visibility="visible" />
+        <!-- Botões de Ação -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <!-- Botão Guardar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Guardar"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:icon="@drawable/ic_favorite"
+                app:iconSize="16dp"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:textColor="@color/gray_600"
+                app:iconTint="@color/gray_400" />
+
+            <!-- Botão Ver -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnView"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:text="Ver"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:icon="@drawable/ic_info"
+                app:iconSize="16dp"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:textColor="@color/blue_600"
+                app:iconTint="@color/blue_600" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

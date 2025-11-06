@@ -5,6 +5,7 @@
     <color name="white">#FFFFFFFF</color>
     
     <!-- Azul (Primary) -->
+    <color name="blue_50">#EFF6FF</color>
     <color name="blue_600">#2563EB</color>
     <color name="blue_500">#3B82F6</color>
     <color name="blue_400">#60A5FA</color>
