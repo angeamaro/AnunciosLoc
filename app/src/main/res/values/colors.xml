@@ -52,4 +52,11 @@
     <!-- Transparências -->
     <color name="black_overlay">#80000000</color>
     <color name="white_overlay">#80FFFFFF</color>
+    
+    <!-- Cores para Settings Activity -->
+    <color name="background_color">@color/gray_bg</color>
+    <color name="blue_primary">@color/blue_600</color>
+    <color name="text_primary">@color/gray_900</color>
+    <color name="text_secondary">@color/gray_600</color>
+    <color name="orange_accent">@color/orange_600</color>
 </resources>
