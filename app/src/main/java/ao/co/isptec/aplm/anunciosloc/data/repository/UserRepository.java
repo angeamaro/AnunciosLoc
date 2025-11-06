@@ -36,6 +36,7 @@ public class UserRepository {
         // Usuário de teste 1
         User user1 = new User("1", "alice", "alice@example.com", "Alice Silva");
         user1.setPassword("123456");
+        user1.setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1234567890");
         user1.addProfileAttribute("profissao", "Estudante");
         user1.addProfileAttribute("clube", "Benfica");
         user1.addProfileAttribute("interesse", "Tecnologia");
@@ -44,6 +45,7 @@ public class UserRepository {
         // Usuário de teste 2
         User user2 = new User("2", "bob", "bob@example.com", "Bob Santos");
         user2.setPassword("123456");
+        user2.setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0987654321");
         user2.addProfileAttribute("profissao", "Professor");
         user2.addProfileAttribute("clube", "Porto");
         user2.addProfileAttribute("interesse", "Educação");
@@ -52,6 +54,7 @@ public class UserRepository {
         // Usuário de teste 3
         User user3 = new User("3", "carol", "carol@example.com", "Carol Lima");
         user3.setPassword("123456");
+        user3.setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5555555555");
         user3.addProfileAttribute("profissao", "Estudante");
         user3.addProfileAttribute("clube", "Sporting");
         user3.addProfileAttribute("interesse", "Desporto");
@@ -82,6 +85,7 @@ public class UserRepository {
         String userId = UUID.randomUUID().toString();
         User newUser = new User(userId, username, email, name);
         newUser.setPassword(password);
+        newUser.setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A" + userId.substring(0, 8)); // Mock public key
         newUser.setLastLoginAt(System.currentTimeMillis());
         
         usersDatabase.put(email, newUser);

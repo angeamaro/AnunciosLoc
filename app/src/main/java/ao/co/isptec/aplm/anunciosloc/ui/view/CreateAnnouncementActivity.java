@@ -64,8 +64,10 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
     private long startDateTimestamp = 0;
     private long endDateTimestamp = 0;
     private String selectedPolicy = Constants.DELIVERY_POLICY_EVERYONE;
+    private List<String> policyKeys = new ArrayList<>();
     
     private ActivityResultLauncher<Intent> createLocationLauncher;
+    private ActivityResultLauncher<Intent> configurePolicyLauncher;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,23 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
                     // Recarrega as localizações após criar uma nova
                     loadLocations();
                     Toast.makeText(this, "Localização criada com sucesso!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        );
+        
+        // Configurar o launcher para configurar política
+        configurePolicyLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    ArrayList<String> selectedKeys = result.getData().getStringArrayListExtra(ConfigurePolicyActivity.EXTRA_SELECTED_KEYS);
+                    if (selectedKeys != null) {
+                        policyKeys = selectedKeys;
+                        String message = selectedPolicy.equals(Constants.DELIVERY_POLICY_WHITELIST)
+                            ? "Whitelist configurada: " + policyKeys.size() + " usuários"
+                            : "Blacklist configurada: " + policyKeys.size() + " usuários";
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         );
@@ -207,8 +226,10 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
         });
         
         btnConfigurePolicy.setOnClickListener(v -> {
-            // TODO: Abrir activity de configuração de políticas
-            Toast.makeText(this, "Configurar " + selectedPolicy, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ConfigurePolicyActivity.class);
+            intent.putExtra(ConfigurePolicyActivity.EXTRA_POLICY_TYPE, selectedPolicy);
+            intent.putStringArrayListExtra(ConfigurePolicyActivity.EXTRA_SELECTED_KEYS, new ArrayList<>(policyKeys));
+            configurePolicyLauncher.launch(intent);
         });
         
         btnSave.setOnClickListener(v -> createAnnouncement());
@@ -432,7 +453,7 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
             startDateTimestamp,
             endDateTimestamp,
             selectedPolicy,
-            new ArrayList<>() // TODO: Implementar configuração de regras de política
+            policyKeys
         );
     }
 }

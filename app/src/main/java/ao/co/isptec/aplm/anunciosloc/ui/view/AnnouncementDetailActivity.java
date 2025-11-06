@@ -2,7 +2,7 @@ package ao.co.isptec.aplm.anunciosloc.ui.view;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,9 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
 
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.data.model.Announcement;
@@ -28,11 +26,9 @@ public class AnnouncementDetailActivity extends AppCompatActivity {
     
     public static final String EXTRA_ANNOUNCEMENT_ID = "announcement_id";
     
-    private MaterialToolbar toolbar;
-    private TextView txtTitle, txtContent, txtLocation, txtAuthor, txtCreatedDate, txtStartDate, txtEndDate, txtViewCount;
-    private TextView txtTimeRemaining, txtStatus, txtPolicy;
-    private Chip chipActive;
-    private ImageView imgLocation;
+    private ImageButton btnBack;
+    private TextView txtTitle, txtContent, txtLocation, txtAuthor, txtCreatedDate, txtStartDate, txtEndDate;
+    private TextView txtTimeRemaining, txtPolicy, badgeStatus;
     private MaterialButton btnEdit, btnDelete;
     private ProgressBar progressBar;
     private View layoutActions;
@@ -58,14 +54,13 @@ public class AnnouncementDetailActivity extends AppCompatActivity {
         
         initializeViews();
         initializeViewModel();
-        setupToolbar();
         setupListeners();
         observeViewModel();
         loadAnnouncementDetails();
     }
     
     private void initializeViews() {
-        toolbar = findViewById(R.id.toolbar);
+        btnBack = findViewById(R.id.btnBack);
         txtTitle = findViewById(R.id.txtTitle);
         txtContent = findViewById(R.id.txtContent);
         txtLocation = findViewById(R.id.txtLocation);
@@ -73,12 +68,9 @@ public class AnnouncementDetailActivity extends AppCompatActivity {
         txtCreatedDate = findViewById(R.id.txtCreatedDate);
         txtStartDate = findViewById(R.id.txtStartDate);
         txtEndDate = findViewById(R.id.txtEndDate);
-        txtViewCount = findViewById(R.id.txtViewCount);
         txtTimeRemaining = findViewById(R.id.txtTimeRemaining);
-        txtStatus = findViewById(R.id.txtStatus);
         txtPolicy = findViewById(R.id.txtPolicy);
-        chipActive = findViewById(R.id.chipActive);
-        imgLocation = findViewById(R.id.imgLocation);
+        badgeStatus = findViewById(R.id.badgeStatus);
         btnEdit = findViewById(R.id.btnEdit);
         btnDelete = findViewById(R.id.btnDelete);
         progressBar = findViewById(R.id.progressBar);
@@ -90,17 +82,9 @@ public class AnnouncementDetailActivity extends AppCompatActivity {
         userRepository = UserRepository.getInstance();
     }
     
-    private void setupToolbar() {
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Detalhes do Anúncio");
-        }
-        
-        toolbar.setNavigationOnClickListener(v -> finish());
-    }
-    
     private void setupListeners() {
+        btnBack.setOnClickListener(v -> finish());
+        
         btnEdit.setOnClickListener(v -> {
             // TODO: Abrir CreateAnnouncementActivity em modo edição
             Toast.makeText(this, "Editar anúncio", Toast.LENGTH_SHORT).show();
@@ -113,13 +97,6 @@ public class AnnouncementDetailActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteAnnouncement())
                 .setNegativeButton(R.string.no, null)
                 .show();
-        });
-        
-        imgLocation.setOnClickListener(v -> {
-            if (currentAnnouncement != null) {
-                Toast.makeText(this, "Ver local: " + currentAnnouncement.getLocationName(), Toast.LENGTH_SHORT).show();
-                // TODO: Abrir mapa ou detalhes da localização
-            }
         });
     }
     
@@ -171,52 +148,47 @@ public class AnnouncementDetailActivity extends AppCompatActivity {
         txtLocation.setText(announcement.getLocationName());
         
         // Autor
-        txtAuthor.setText("Por: " + announcement.getAuthorName());
+        txtAuthor.setText(announcement.getAuthorName());
         
         // Datas
-        txtCreatedDate.setText("Publicado: " + DateUtils.formatDateTime(announcement.getCreatedAt()));
-        txtStartDate.setText("Início: " + DateUtils.formatDateTime(announcement.getStartDate()));
-        txtEndDate.setText("Término: " + DateUtils.formatDateTime(announcement.getEndDate()));
-        
-        // Visualizações
-        txtViewCount.setText(announcement.getViewCount() + " visualizações");
+        txtCreatedDate.setText(DateUtils.formatDateTime(announcement.getCreatedAt()));
+        txtStartDate.setText(DateUtils.formatDateTime(announcement.getStartDate()));
+        txtEndDate.setText(DateUtils.formatDateTime(announcement.getEndDate()));
         
         // Tempo restante
         if (announcement.getEndDate() != null && announcement.getEndDate().getTime() > System.currentTimeMillis()) {
             String remaining = DateUtils.getTimeRemaining(announcement.getEndDate());
-            txtTimeRemaining.setText(remaining);
+            txtTimeRemaining.setText("⏱️ Expira " + remaining);
             txtTimeRemaining.setVisibility(View.VISIBLE);
         } else {
             txtTimeRemaining.setVisibility(View.GONE);
         }
         
-        // Status
+        // Badge de Status
         if (announcement.isActive()) {
-            chipActive.setText("Ativo");
-            chipActive.setChipBackgroundColorResource(R.color.success);
-            txtStatus.setText("Este anúncio está ativo e sendo distribuído");
+            badgeStatus.setText("Ativo");
+            badgeStatus.setBackgroundResource(R.drawable.bg_badge_orange);
         } else {
-            chipActive.setText("Inativo");
-            chipActive.setChipBackgroundColorResource(R.color.gray_400);
-            txtStatus.setText("Este anúncio não está mais ativo");
+            badgeStatus.setText("Expirado");
+            badgeStatus.setBackgroundResource(R.drawable.bg_badge_gray);
         }
         
         // Política de entrega
         String policyText;
         switch (announcement.getDeliveryPolicy()) {
             case "EVERYONE":
-                policyText = "Todos os usuários";
+                policyText = "📋 Política: Todos os usuários";
                 break;
             case "WHITELIST":
-                policyText = "Apenas usuários específicos (Whitelist)";
+                policyText = "📋 Política: Apenas usuários específicos (Whitelist)";
                 break;
             case "BLACKLIST":
-                policyText = "Excluindo usuários específicos (Blacklist)";
+                policyText = "📋 Política: Excluindo usuários específicos (Blacklist)";
                 break;
             default:
-                policyText = announcement.getDeliveryPolicy();
+                policyText = "📋 Política: " + announcement.getDeliveryPolicy();
         }
-        txtPolicy.setText("Política: " + policyText);
+        txtPolicy.setText(policyText);
         
         // Verifica se usuário atual é o autor
         if (userRepository.getCurrentUser() != null && 

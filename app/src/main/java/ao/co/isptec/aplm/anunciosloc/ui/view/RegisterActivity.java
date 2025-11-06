@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import ao.co.isptec.aplm.anunciosloc.MainActivity;
+import ao.co.isptec.aplm.anunciosloc.ui.view.MainActivity;
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.data.model.User;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.AuthViewModel;

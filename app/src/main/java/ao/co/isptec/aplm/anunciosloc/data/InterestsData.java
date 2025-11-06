@@ -1,7 +1,7 @@
 package ao.co.isptec.aplm.anunciosloc.data;
 
 import ao.co.isptec.aplm.anunciosloc.R;
-import ao.co.isptec.aplm.anunciosloc.models.InterestCategory;
+import ao.co.isptec.aplm.anunciosloc.data.model.InterestCategory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

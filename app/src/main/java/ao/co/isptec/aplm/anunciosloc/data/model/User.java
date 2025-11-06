@@ -14,6 +14,7 @@ public class User {
     private String name;
     private String phoneNumber;
     private String photoUrl;
+    private String publicKey; // Chave pública do usuário para criptografia
     private Map<String, String> profileAttributes; // Pares chave-valor (ex: "clube"="Benfica")
     private long createdAt;
     private long lastLoginAt;
@@ -86,6 +87,14 @@ public class User {
     
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+    
+    public String getPublicKey() {
+        return publicKey;
+    }
+    
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
     
     public Map<String, String> getProfileAttributes() {

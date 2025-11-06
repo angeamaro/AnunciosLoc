@@ -189,7 +189,20 @@ public class AnnouncementViewModel extends ViewModel {
      */
     public void createAnnouncement(String title, String content, String locationId, 
                                    long startDate, long endDate, String deliveryPolicy, 
-                                   List<ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule> policyRules) {
+                                   List<String> policyKeys) {
+        // Converte chaves de política em PolicyRules
+        List<ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule> policyRules = null;
+        if (policyKeys != null && !policyKeys.isEmpty()) {
+            policyRules = new java.util.ArrayList<>();
+            for (String key : policyKeys) {
+                ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule rule = 
+                    new ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule();
+                rule.setAttributeKey("publicKey");
+                rule.setAttributeValue(key);
+                policyRules.add(rule);
+            }
+        }
+        
         // Cria objeto Announcement
         Announcement announcement = new Announcement();
         announcement.setTitle(title);

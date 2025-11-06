@@ -27,7 +27,7 @@
         
         <!-- Splash Screen (Launcher) -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.view.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AnunciosLoc">
             <intent-filter>
@@ -38,7 +38,7 @@
         
         <!-- Main Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.view.MainActivity"
             android:exported="false" />
         
         <!-- Authentication Activities -->
@@ -62,40 +62,46 @@
             android:name=".ui.view.AddLocationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".ui.view.MainActivity" />
         
         <!-- Announcement Activities -->
         <activity
             android:name=".ui.view.CreateAnnouncementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".ui.view.MainActivity" />
         
         <activity
             android:name=".ui.view.AnnouncementDetailActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".ui.view.MainActivity" />
+        
+        <activity
+            android:name=".ui.view.ConfigurePolicyActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".ui.view.CreateAnnouncementActivity" />
         
         <!-- Menu Options Activity -->
         <activity
             android:name=".ui.view.MenuOptionsActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".ui.view.MainActivity" />
         
         <!-- Interests Activities -->
         <activity
-            android:name=".activities.InterestsActivity"
+            android:name=".ui.view.InterestsActivity"
             android:exported="false"
             android:parentActivityName=".ui.view.MenuOptionsActivity" />
         
         <activity
-            android:name=".activities.InterestValuesActivity"
+            android:name=".ui.view.InterestValuesActivity"
             android:exported="false"
-            android:parentActivityName=".activities.InterestsActivity" />
+            android:parentActivityName=".ui.view.InterestsActivity" />
         
         <!-- Policies Activity -->
         <activity
-            android:name=".ui.view.activities.PoliciesActivity"
+            android:name=".ui.view.PoliciesActivity"
             android:exported="false"
             android:parentActivityName=".ui.view.MenuOptionsActivity" />
         
