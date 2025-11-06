@@ -11,6 +11,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import ao.co.isptec.aplm.anunciosloc.MainActivity;
 import ao.co.isptec.aplm.anunciosloc.R;
+import ao.co.isptec.aplm.anunciosloc.activities.ProfileActivity;
 import ao.co.isptec.aplm.anunciosloc.activities.InterestsActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.view.activities.PoliciesActivity;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
@@ -57,7 +58,8 @@ public class MenuOptionsActivity extends AppCompatActivity {
 
         // Conta
         cardPerfil.setOnClickListener(v -> {
-            Toast.makeText(this, "Perfil - Em desenvolvimento", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
         });
 
         cardDefinicoes.setOnClickListener(v -> {
