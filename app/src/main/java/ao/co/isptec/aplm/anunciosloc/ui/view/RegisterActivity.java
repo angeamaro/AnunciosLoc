@@ -24,20 +24,18 @@ import ao.co.isptec.aplm.anunciosloc.utils.ValidationUtils;
  */
 public class RegisterActivity extends AppCompatActivity {
     
-    private EditText editUsername, editName, editEmail, editPassword, editConfirmPassword;
+    private EditText editUsername, editPassword, editConfirmPassword;
     private Button btnRegister;
     private TextView txtLogin;
     private ProgressBar progressBar;
     
     private AuthViewModel authViewModel;
-    private PreferencesHelper preferencesHelper;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         
-        // Esconde ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -50,15 +48,11 @@ public class RegisterActivity extends AppCompatActivity {
     
     private void initializeViews() {
         editUsername = findViewById(R.id.editUsername);
-        editName = findViewById(R.id.editName);
-        editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
         txtLogin = findViewById(R.id.txtLogin);
         progressBar = findViewById(R.id.progressBar);
-        
-        preferencesHelper = new PreferencesHelper(this);
     }
     
     private void initializeViewModel() {
@@ -74,38 +68,21 @@ public class RegisterActivity extends AppCompatActivity {
     }
     
     private void observeViewModel() {
-        // Observa estado de carregamento
         authViewModel.getIsLoading().observe(this, isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             btnRegister.setEnabled(!isLoading);
             setFieldsEnabled(!isLoading);
         });
         
-        // Observa sucesso de registro
         authViewModel.getRegisterSuccess().observe(this, success -> {
             if (success != null && success) {
-                User user = authViewModel.getCurrentUser();
-                if (user != null) {
-                    // Salva sessão
-                    preferencesHelper.saveUserSession(
-                        user.getId(),
-                        user.getName(),  // Corrigido: usa getName() ao invés de getUsername()
-                        user.getEmail(),
-                        "mock_token_" + user.getId()
-                    );
-                    
-                    Toast.makeText(this, R.string.success_register, Toast.LENGTH_SHORT).show();
-                    
-                    // Navega para MainActivity
-                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                }
+                Toast.makeText(this, R.string.success_register, Toast.LENGTH_LONG).show();
+                
+                // Fecha a tela de registro e volta para a de Login
+                finish(); 
             }
         });
         
-        // Observa mensagens de erro
         authViewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
@@ -114,16 +91,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
     
     private void attemptRegister() {
-        // Limpa erros anteriores
         clearErrors();
         
         String username = editUsername.getText().toString().trim();
-        String name = editName.getText().toString().trim();
-        String email = editEmail.getText().toString().trim();
         String password = editPassword.getText().toString();
         String confirmPassword = editConfirmPassword.getText().toString();
         
-        // Validações
         boolean isValid = true;
         
         if (!ValidationUtils.isNotEmpty(username)) {
@@ -131,19 +104,6 @@ public class RegisterActivity extends AppCompatActivity {
             isValid = false;
         } else if (!ValidationUtils.isValidUsername(username)) {
             editUsername.setError("Nome de utilizador inválido (3-20 caracteres alfanuméricos)");
-            isValid = false;
-        }
-        
-        if (!ValidationUtils.isNotEmpty(name)) {
-            editName.setError(getString(R.string.error_empty_field));
-            isValid = false;
-        }
-        
-        if (!ValidationUtils.isNotEmpty(email)) {
-            editEmail.setError(getString(R.string.error_empty_field));
-            isValid = false;
-        } else if (!ValidationUtils.isValidEmail(email)) {
-            editEmail.setError(getString(R.string.error_invalid_email));
             isValid = false;
         }
         
@@ -164,22 +124,18 @@ public class RegisterActivity extends AppCompatActivity {
         }
         
         if (isValid) {
-            authViewModel.register(username, email, password, name);
+            authViewModel.register(username, username + "@example.com", password, username);
         }
     }
     
     private void clearErrors() {
         editUsername.setError(null);
-        editName.setError(null);
-        editEmail.setError(null);
         editPassword.setError(null);
         editConfirmPassword.setError(null);
     }
     
     private void setFieldsEnabled(boolean enabled) {
         editUsername.setEnabled(enabled);
-        editName.setEnabled(enabled);
-        editEmail.setEnabled(enabled);
         editPassword.setEnabled(enabled);
         editConfirmPassword.setEnabled(enabled);
     }

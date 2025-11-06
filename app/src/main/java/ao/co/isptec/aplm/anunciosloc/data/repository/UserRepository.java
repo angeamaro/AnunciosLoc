@@ -40,7 +40,7 @@ public class UserRepository {
         user1.addProfileAttribute("profissao", "Estudante");
         user1.addProfileAttribute("clube", "Benfica");
         user1.addProfileAttribute("interesse", "Tecnologia");
-        usersDatabase.put(user1.getEmail(), user1);
+        usersDatabase.put(user1.getUsername(), user1); // Alterado para usar username como chave
         
         // Usuário de teste 2
         User user2 = new User("2", "bob", "bob@example.com", "Bob Santos");
@@ -49,7 +49,7 @@ public class UserRepository {
         user2.addProfileAttribute("profissao", "Professor");
         user2.addProfileAttribute("clube", "Porto");
         user2.addProfileAttribute("interesse", "Educação");
-        usersDatabase.put(user2.getEmail(), user2);
+        usersDatabase.put(user2.getUsername(), user2); // Alterado para usar username como chave
         
         // Usuário de teste 3
         User user3 = new User("3", "carol", "carol@example.com", "Carol Lima");
@@ -58,14 +58,14 @@ public class UserRepository {
         user3.addProfileAttribute("profissao", "Estudante");
         user3.addProfileAttribute("clube", "Sporting");
         user3.addProfileAttribute("interesse", "Desporto");
-        usersDatabase.put(user3.getEmail(), user3);
+        usersDatabase.put(user3.getUsername(), user3); // Alterado para usar username como chave
     }
     
     /**
      * Realiza login
      */
-    public User login(String email, String password) {
-        User user = usersDatabase.get(email);
+    public User login(String username, String password) { // Alterado de email para username
+        User user = usersDatabase.get(username);
         if (user != null && user.getPassword().equals(password)) {
             user.setLastLoginAt(System.currentTimeMillis());
             currentUser = user;
@@ -78,8 +78,8 @@ public class UserRepository {
      * Registra novo usuário
      */
     public User register(String username, String email, String password, String name) {
-        if (usersDatabase.containsKey(email)) {
-            return null; // Email já existe
+        if (usersDatabase.containsKey(username)) { // Alterado para verificar username
+            return null; // Username já existe
         }
         
         String userId = UUID.randomUUID().toString();
@@ -88,7 +88,7 @@ public class UserRepository {
         newUser.setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A" + userId.substring(0, 8)); // Mock public key
         newUser.setLastLoginAt(System.currentTimeMillis());
         
-        usersDatabase.put(email, newUser);
+        usersDatabase.put(username, newUser); // Alterado para usar username como chave
         currentUser = newUser;
         return newUser;
     }
@@ -127,21 +127,26 @@ public class UserRepository {
     }
     
     /**
-     * Obtém usuário por email
+     * Obtém usuário por email (agora itera, pois não é mais a chave)
      */
     public User getUserByEmail(String email) {
-        return usersDatabase.get(email);
+        for (User user : usersDatabase.values()) {
+            if (user.getEmail().equals(email)) {
+                return user;
+            }
+        }
+        return null;
     }
     
     /**
      * Atualiza perfil do usuário
      */
     public boolean updateUserProfile(User user) {
-        if (user == null || user.getEmail() == null) {
+        if (user == null || user.getUsername() == null) {
             return false;
         }
         
-        usersDatabase.put(user.getEmail(), user);
+        usersDatabase.put(user.getUsername(), user); // Alterado para usar username como chave
         if (currentUser != null && currentUser.getId().equals(user.getId())) {
             currentUser = user;
         }
@@ -189,19 +194,31 @@ public class UserRepository {
             return false;
         }
     }
+
+    /**
+     * Verifica se username já existe
+     */
+    public boolean usernameExists(String username) {
+        return usersDatabase.containsKey(username);
+    }
     
     /**
-     * Verifica se email já existe
+     * Verifica se email já existe (agora itera)
      */
     public boolean emailExists(String email) {
-        return usersDatabase.containsKey(email);
+        for (User user : usersDatabase.values()) {
+            if (user.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
      * Recuperação de senha (mock - apenas retorna sucesso)
      */
     public boolean recoverPassword(String email) {
-        return usersDatabase.containsKey(email);
+        return emailExists(email);
     }
     
     /**

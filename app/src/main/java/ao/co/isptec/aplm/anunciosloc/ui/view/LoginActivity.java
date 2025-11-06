@@ -25,7 +25,7 @@ import ao.co.isptec.aplm.anunciosloc.utils.ValidationUtils;
  */
 public class LoginActivity extends AppCompatActivity {
     
-    private EditText editEmail, editPassword;
+    private EditText editUsername, editPassword;
     private Button btnLogin;
     private TextView txtRegister, txtForgotPassword;
     private ProgressBar progressBar;
@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void initializeViews() {
-        editEmail = findViewById(R.id.editEmail);
+        editUsername = findViewById(R.id.editUsername);
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
         txtRegister = findViewById(R.id.txtRegister);
@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         authViewModel.getIsLoading().observe(this, isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             btnLogin.setEnabled(!isLoading);
-            editEmail.setEnabled(!isLoading);
+            editUsername.setEnabled(!isLoading);
             editPassword.setEnabled(!isLoading);
         });
         
@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     // Salva sessão
                     preferencesHelper.saveUserSession(
                         user.getId(),
-                        user.getName(),  // Corrigido: usa getName() ao invés de getUsername()
+                        user.getName(),  
                         user.getEmail(),
                         "mock_token_" + user.getId()
                     );
@@ -119,33 +119,27 @@ public class LoginActivity extends AppCompatActivity {
     
     private void attemptLogin() {
         // Limpa erros anteriores
-        editEmail.setError(null);
+        editUsername.setError(null);
         editPassword.setError(null);
         
-        String email = editEmail.getText().toString().trim();
+        String username = editUsername.getText().toString().trim();
         String password = editPassword.getText().toString();
         
         // Validações
         boolean isValid = true;
         
-        if (!ValidationUtils.isNotEmpty(email)) {
-            editEmail.setError(getString(R.string.error_empty_field));
-            isValid = false;
-        } else if (!ValidationUtils.isValidEmail(email)) {
-            editEmail.setError(getString(R.string.error_invalid_email));
+        if (!ValidationUtils.isNotEmpty(username)) {
+            editUsername.setError(getString(R.string.error_empty_field));
             isValid = false;
         }
         
         if (!ValidationUtils.isNotEmpty(password)) {
             editPassword.setError(getString(R.string.error_empty_field));
             isValid = false;
-        } else if (!ValidationUtils.isValidPassword(password)) {
-            editPassword.setError(getString(R.string.error_invalid_password));
-            isValid = false;
         }
         
         if (isValid) {
-            authViewModel.login(email, password);
+            authViewModel.login(username, password);
         }
     }
 }

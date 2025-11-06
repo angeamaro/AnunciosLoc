@@ -56,6 +56,20 @@
             android:name=".ui.view.ForgotPasswordActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Profile, Settings, and Password -->
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.ChangePasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false" />
+
         
         <!-- Location Activities -->
         <activity
