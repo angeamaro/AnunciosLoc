@@ -59,4 +59,7 @@
     <color name="text_primary">@color/gray_900</color>
     <color name="text_secondary">@color/gray_600</color>
     <color name="orange_accent">@color/orange_600</color>
+    <color name="card_background">#F0F4F8</color>
+    <color name="card_background_alt">#E8F0FE</color>
+    <color name="divider">@color/gray_200</color>
 </resources>

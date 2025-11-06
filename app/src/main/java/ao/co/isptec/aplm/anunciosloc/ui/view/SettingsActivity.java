@@ -1,13 +1,12 @@
 package ao.co.isptec.aplm.anunciosloc.ui.view;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,22 +16,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import ao.co.isptec.aplm.anunciosloc.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private SwitchMaterial switchLocation, switchNotifications, switchMulaMode;
-    private TextView tvLocationStatus, tvNotificationStatus;
+    private SwitchMaterial switchLocation, switchWiFi, switchNotifications, switchMulaMode;
+    private TextView tvLocationStatus, tvNotificationStatus, tvSaibaMais;
+    private Button btnSalvar;
+    private LinearLayout btnBack;
     private SharedPreferences prefs;
     
     private static final int REQUEST_CODE_LOCATION = 100;
     private static final int REQUEST_CODE_NOTIFICATION = 101;
     private static final String PREFS_NAME = "AppSettings";
     private static final String KEY_LOCATION = "location_enabled";
+    private static final String KEY_WIFI = "wifi_enabled";
     private static final String KEY_NOTIFICATIONS = "notifications_enabled";
     private static final String KEY_MULA_MODE = "mula_mode_enabled";
 
@@ -43,126 +43,122 @@ public class SettingsActivity extends AppCompatActivity {
 
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-        toolbar.setNavigationOnClickListener(v -> finish());
-
         initializeViews();
         loadSettings();
-        setupPermissionSwitches();
+        setupListeners();
     }
 
     private void initializeViews() {
+        btnBack = findViewById(R.id.btnBack);
         switchLocation = findViewById(R.id.switchLocation);
+        switchWiFi = findViewById(R.id.switchWiFi);
         switchNotifications = findViewById(R.id.switchNotifications);
         switchMulaMode = findViewById(R.id.switchMulaMode);
         tvLocationStatus = findViewById(R.id.tvLocationStatus);
         tvNotificationStatus = findViewById(R.id.tvNotificationStatus);
-
-        MaterialCardView cardPolicies = findViewById(R.id.cardPolicies);
-        cardPolicies.setOnClickListener(v -> 
-            Toast.makeText(this, "Políticas de Privacidade - Em desenvolvimento", Toast.LENGTH_SHORT).show()
-        );
+        tvSaibaMais = findViewById(R.id.tvSaibaMais);
+        btnSalvar = findViewById(R.id.btnSalvar);
     }
 
     private void loadSettings() {
+        boolean locationEnabled = prefs.getBoolean(KEY_LOCATION, false);
+        boolean wifiEnabled = prefs.getBoolean(KEY_WIFI, false);
+        boolean notificationsEnabled = prefs.getBoolean(KEY_NOTIFICATIONS, false);
         boolean mulaMode = prefs.getBoolean(KEY_MULA_MODE, false);
-        switchMulaMode.setChecked(mulaMode);
-    }
 
-    private void setupPermissionSwitches() {
-        setupLocationSwitch();
-        setupNotificationSwitch();
-        setupMulaModeSwitch();
-    }
-
-    private void setupLocationSwitch() {
-        final boolean hasLocationPermission = ContextCompat.checkSelfPermission(this, 
+        boolean hasLocationPermission = ContextCompat.checkSelfPermission(this, 
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         
-        switchLocation.setChecked(hasLocationPermission);
-        updateLocationStatus(hasLocationPermission);
+        boolean hasNotificationPermission = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            hasNotificationPermission = ContextCompat.checkSelfPermission(this, 
+                    Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+        }
+
+        switchLocation.setChecked(hasLocationPermission && locationEnabled);
+        switchWiFi.setChecked(wifiEnabled);
+        switchNotifications.setChecked(hasNotificationPermission && notificationsEnabled);
+        switchMulaMode.setChecked(mulaMode);
+
+        updateLocationStatus(hasLocationPermission && locationEnabled);
+        updateNotificationStatus(hasNotificationPermission && notificationsEnabled);
+    }
+
+    private void setupListeners() {
+        btnBack.setOnClickListener(v -> finish());
 
         switchLocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                if (!hasLocationPermission) {
+                boolean hasPermission = ContextCompat.checkSelfPermission(SettingsActivity.this, 
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                if (!hasPermission) {
                     requestLocationPermission();
+                    switchLocation.setChecked(false);
                 } else {
-                    saveLocationSetting(true);
+                    updateLocationStatus(true);
                 }
             } else {
-                if (hasLocationPermission) {
-                    showPermissionDisableDialog("Localização", 
-                        "Para desativar a permissão de localização, vá às Definições do sistema.");
-                    switchLocation.setChecked(true);
-                }
-                saveLocationSetting(false);
+                updateLocationStatus(false);
             }
         });
-    }
 
-    private void setupNotificationSwitch() {
-        boolean hasNotifPerm = true;
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            hasNotifPerm = ContextCompat.checkSelfPermission(this, 
-                    Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
-        }
-        
-        final boolean hasNotificationPermission = hasNotifPerm;
-        
-        switchNotifications.setChecked(hasNotificationPermission);
-        updateNotificationStatus(hasNotificationPermission);
+        switchWiFi.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Toast.makeText(SettingsActivity.this, isChecked ? "Detecção Wi-Fi ativada" : "Detecção Wi-Fi desativada", 
+                    Toast.LENGTH_SHORT).show();
+        });
 
         switchNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                if (!hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                boolean hasPermission = true;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    hasPermission = ContextCompat.checkSelfPermission(SettingsActivity.this, 
+                            Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+                }
+                if (!hasPermission) {
                     requestNotificationPermission();
+                    switchNotifications.setChecked(false);
                 } else {
-                    saveNotificationSetting(true);
+                    updateNotificationStatus(true);
                 }
             } else {
-                if (hasNotificationPermission) {
-                    showPermissionDisableDialog("Notificações", 
-                        "Para desativar as notificações, vá às Definições do sistema.");
-                    switchNotifications.setChecked(true);
-                }
-                saveNotificationSetting(false);
+                updateNotificationStatus(false);
             }
         });
-    }
 
-    private void setupMulaModeSwitch() {
         switchMulaMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            saveMulaModeSetting(isChecked);
             String message = isChecked ? 
                 "Modo MULA ativado - Sistema de entrega baseado em localização" : 
                 "Modo MULA desativado";
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_SHORT).show();
         });
+
+        tvSaibaMais.setOnClickListener(v -> {
+            new AlertDialog.Builder(SettingsActivity.this)
+                .setTitle("Sobre o Modo MULA")
+                .setMessage("O modo MULA permite que você auxilie na distribuição de anúncios, " +
+                        "atuando como um intermediário no sistema de comunicação baseado em localização. " +
+                        "Você ajuda a retransmitir anúncios para outros usuários próximos.")
+                .setPositiveButton("Entendi", null)
+                .show();
+        });
+
+        btnSalvar.setOnClickListener(v -> saveAllSettings());
     }
 
     private void requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, 
                 Manifest.permission.ACCESS_FINE_LOCATION)) {
-            
             new AlertDialog.Builder(this)
                 .setTitle("Permissão de Localização")
                 .setMessage("Esta aplicação precisa de acesso à sua localização para mostrar anúncios relevantes próximos de si.")
-                .setPositiveButton("Permitir", (dialog, which) -> 
-                    ActivityCompat.requestPermissions(this, 
+                .setPositiveButton("Permitir", (dialog, which) -> {
+                    ActivityCompat.requestPermissions(SettingsActivity.this, 
                         new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION
-                        }, REQUEST_CODE_LOCATION)
-                )
-                .setNegativeButton("Cancelar", (dialog, which) -> {
-                    switchLocation.setChecked(false);
-                    dialog.dismiss();
+                        }, REQUEST_CODE_LOCATION);
                 })
+                .setNegativeButton("Cancelar", null)
                 .create()
                 .show();
         } else {
@@ -182,21 +178,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void showPermissionDisableDialog(String permissionName, String message) {
-        new AlertDialog.Builder(this)
-            .setTitle("Desativar " + permissionName)
-            .setMessage(message)
-            .setPositiveButton("Ir para Definições", (dialog, which) -> {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                startActivity(intent);
-            })
-            .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
-            .create()
-            .show();
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, 
                                          @NonNull int[] grantResults) {
@@ -206,24 +187,20 @@ public class SettingsActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 switchLocation.setChecked(true);
                 updateLocationStatus(true);
-                saveLocationSetting(true);
                 Toast.makeText(this, "Permissão de localização concedida", Toast.LENGTH_SHORT).show();
             } else {
                 switchLocation.setChecked(false);
                 updateLocationStatus(false);
-                saveLocationSetting(false);
                 Toast.makeText(this, "Permissão de localização negada", Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQUEST_CODE_NOTIFICATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 switchNotifications.setChecked(true);
                 updateNotificationStatus(true);
-                saveNotificationSetting(true);
                 Toast.makeText(this, "Permissão de notificações concedida", Toast.LENGTH_SHORT).show();
             } else {
                 switchNotifications.setChecked(false);
                 updateNotificationStatus(false);
-                saveNotificationSetting(false);
                 Toast.makeText(this, "Permissão de notificações negada", Toast.LENGTH_SHORT).show();
             }
         }
@@ -232,29 +209,27 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setupLocationSwitch();
-        setupNotificationSwitch();
+        loadSettings();
     }
 
     private void updateLocationStatus(boolean enabled) {
         tvLocationStatus.setText(enabled ? 
-            "Localização ativada" : "Localização desativada");
+            "Usar coordenadas geográficas" : "Localização desativada");
     }
 
     private void updateNotificationStatus(boolean enabled) {
         tvNotificationStatus.setText(enabled ? 
-            "Notificações ativadas" : "Notificações desativadas");
+            "Alertas de anúncios próximos" : "Notificações desativadas");
     }
 
-    private void saveLocationSetting(boolean enabled) {
-        prefs.edit().putBoolean(KEY_LOCATION, enabled).apply();
-    }
+    private void saveAllSettings() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(KEY_LOCATION, switchLocation.isChecked());
+        editor.putBoolean(KEY_WIFI, switchWiFi.isChecked());
+        editor.putBoolean(KEY_NOTIFICATIONS, switchNotifications.isChecked());
+        editor.putBoolean(KEY_MULA_MODE, switchMulaMode.isChecked());
+        editor.apply();
 
-    private void saveNotificationSetting(boolean enabled) {
-        prefs.edit().putBoolean(KEY_NOTIFICATIONS, enabled).apply();
-    }
-
-    private void saveMulaModeSetting(boolean enabled) {
-        prefs.edit().putBoolean(KEY_MULA_MODE, enabled).apply();
+        Toast.makeText(this, "Definições guardadas com sucesso!", Toast.LENGTH_SHORT).show();
     }
 }
