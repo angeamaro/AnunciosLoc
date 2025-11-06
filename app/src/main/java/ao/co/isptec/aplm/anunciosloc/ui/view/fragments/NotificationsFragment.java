@@ -1,13 +1,16 @@
 package ao.co.isptec.aplm.anunciosloc.ui.view.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,342 +23,320 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import ao.co.isptec.aplm.anunciosloc.R;
+import ao.co.isptec.aplm.anunciosloc.data.model.Notification;
+import ao.co.isptec.aplm.anunciosloc.ui.view.AnnouncementDetailActivity;
+import ao.co.isptec.aplm.anunciosloc.ui.view.MenuOptionsActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.view.adapters.NotificationAdapter;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.NotificationViewModel;
 
 /**
- * Fragment para listar notificações
+ * Fragment para exibir notificações com funcionalidades completas
  */
-public class NotificationsFragment extends Fragment {
+public class NotificationsFragment extends Fragment implements NotificationAdapter.OnNotificationActionListener {
+    
+    private static final String TAG = "NotificationsFragment";
+    private static final String PREFS_NAME = "saved_announcements";
+    private static final String KEY_SAVED_IDS = "saved_ids";
     
     private RecyclerView recyclerView;
     private NotificationAdapter adapter;
     private ProgressBar progressBar;
-    private TextView txtEmpty;
+    private LinearLayout txtEmpty;
     private MaterialButton btnMarkAllRead;
     private ImageButton btnMenu;
+    private LinearLayout containerMarkAllRead;
     
     private NotificationViewModel viewModel;
+    private SharedPreferences prefs;
     
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        try {
-            View view = inflater.inflate(R.layout.fragment_notifications, container, false);
-            
-            initializeViews(view);
-            initializeViewModel();
-            setupRecyclerView();
-            setupListeners();
-            observeViewModel();
-            
-            // Carrega notificações mockadas
-            loadMockNotifications();
-            
-            return view;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Retorna uma view vazia em caso de erro
-            return new View(getContext());
-        }
+        View view = inflater.inflate(R.layout.fragment_notifications, container, false);
+        
+        initializeViews(view);
+        initializePreferences();
+        initializeViewModel();
+        setupRecyclerView();
+        setupListeners();
+        observeViewModel();
+        
+        // Carrega notificações mockadas
+        loadMockNotifications();
+        
+        return view;
     }
     
     private void initializeViews(View view) {
-        try {
-            recyclerView = view.findViewById(R.id.recyclerNotifications);
-            progressBar = view.findViewById(R.id.progressBar);
-            txtEmpty = view.findViewById(R.id.txtEmpty);
-            btnMarkAllRead = view.findViewById(R.id.btnMarkAllRead);
-            btnMenu = view.findViewById(R.id.btnMenu);
-            
-            android.util.Log.d("NotificationsFragment", "Views inicializadas:");
-            android.util.Log.d("NotificationsFragment", "btnMenu: " + (btnMenu != null ? "OK" : "NULL"));
-            android.util.Log.d("NotificationsFragment", "recyclerView: " + (recyclerView != null ? "OK" : "NULL"));
-        } catch (Exception e) {
-            android.util.Log.e("NotificationsFragment", "Erro em initializeViews", e);
-            e.printStackTrace();
+        recyclerView = view.findViewById(R.id.recyclerNotifications);
+        progressBar = view.findViewById(R.id.progressBar);
+        txtEmpty = view.findViewById(R.id.txtEmpty);
+        btnMarkAllRead = view.findViewById(R.id.btnMarkAllRead);
+        btnMenu = view.findViewById(R.id.btnMenu);
+        containerMarkAllRead = view.findViewById(R.id.containerMarkAllRead);
+        
+        Log.d(TAG, "Views inicializadas - btnMenu: " + (btnMenu != null));
+    }
+    
+    private void initializePreferences() {
+        if (getContext() != null) {
+            prefs = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         }
     }
     
     private void initializeViewModel() {
-        try {
-            viewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        viewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
     }
     
     private void setupRecyclerView() {
-        try {
-            if (recyclerView == null) return;
-            
-            adapter = new NotificationAdapter(new ArrayList<>());
-            
-            // Listener para clique no card
-            adapter.setOnNotificationClickListener(notification -> {
-                if (!notification.isRead()) {
-                    // Marca como lida
-                    notification.setRead(true);
-                    adapter.notifyDataSetChanged();
-                    if (viewModel != null) {
-                        viewModel.markAsRead(notification.getId());
-                    }
-                }
-            });
-
-            // Listener para os botões de ação
-            adapter.setOnNotificationActionListener(new NotificationAdapter.OnNotificationActionListener() {
-                @Override
-                public void onViewNotification(ao.co.isptec.aplm.anunciosloc.data.model.Notification notification) {
-                    // Marca como lida ao ver
-                    if (!notification.isRead()) {
-                        notification.setRead(true);
-                        adapter.notifyDataSetChanged();
-                        if (viewModel != null) {
-                            viewModel.markAsRead(notification.getId());
-                        }
-                    }
-
-                    // Redireciona baseado no tipo de notificação
-                    try {
-                        if ("ANNOUNCEMENT".equals(notification.getType()) && notification.getRelatedId() != null) {
-                            // Abre detalhes do anúncio
-                            Intent intent = new Intent(getContext(), ao.co.isptec.aplm.anunciosloc.ui.view.AnnouncementDetailActivity.class);
-                            intent.putExtra(ao.co.isptec.aplm.anunciosloc.ui.view.AnnouncementDetailActivity.EXTRA_ANNOUNCEMENT_ID, notification.getRelatedId());
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(getContext(), "Ver: " + notification.getTitle(), Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getContext(), "Erro ao abrir detalhes", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onSaveNotification(ao.co.isptec.aplm.anunciosloc.data.model.Notification notification) {
-                    // Guarda o anúncio se for do tipo ANNOUNCEMENT
-                    if ("ANNOUNCEMENT".equals(notification.getType()) && notification.getRelatedId() != null) {
-                        try {
-                            // Salva no SharedPreferences
-                            android.content.SharedPreferences prefs = requireContext().getSharedPreferences("saved_announcements", android.content.Context.MODE_PRIVATE);
-                            java.util.Set<String> savedIds = prefs.getStringSet("saved_ids", new java.util.HashSet<>());
-                            java.util.Set<String> newSavedIds = new java.util.HashSet<>(savedIds);
-                            
-                            if (newSavedIds.add(notification.getRelatedId())) {
-                                prefs.edit().putStringSet("saved_ids", newSavedIds).apply();
-                                Toast.makeText(getContext(), "Anúncio guardado com sucesso", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getContext(), "Anúncio já estava guardado", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getContext(), "Erro ao guardar anúncio", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "Esta notificação não pode ser guardada", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            recyclerView.setAdapter(adapter);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        adapter = new NotificationAdapter(new ArrayList<>());
+        adapter.setOnNotificationActionListener(this);
+        
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
     }
     
     private void setupListeners() {
-        try {
-            if (btnMarkAllRead != null) {
-                btnMarkAllRead.setOnClickListener(v -> {
-                    // Marca todas as notificações mockadas como lidas
-                    if (adapter != null) {
-                        java.util.List<ao.co.isptec.aplm.anunciosloc.data.model.Notification> currentNotifications = adapter.notifications;
-                        for (ao.co.isptec.aplm.anunciosloc.data.model.Notification notification : currentNotifications) {
-                            notification.setRead(true);
-                        }
-                        adapter.notifyDataSetChanged();
-                        btnMarkAllRead.setVisibility(View.GONE);
-                        
-                        if (getContext() != null) {
-                            Toast.makeText(getContext(), "Todas as notificações foram marcadas como lidas", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    
-                    // Se houver viewModel, também marca no repositório
-                    if (viewModel != null) {
-                        viewModel.markAllAsRead();
-                    }
-                });
-            }
-            
-            if (btnMenu != null) {
-                android.util.Log.d("NotificationsFragment", "btnMenu encontrado, configurando listener");
-                btnMenu.setOnClickListener(v -> {
-                    android.util.Log.d("NotificationsFragment", "btnMenu clicado!");
-                    try {
-                        Intent intent = new Intent(getContext(), ao.co.isptec.aplm.anunciosloc.ui.view.MenuOptionsActivity.class);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        android.util.Log.e("NotificationsFragment", "Erro ao abrir menu", e);
-                        e.printStackTrace();
-                        Toast.makeText(getContext(), "Erro ao abrir menu", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                android.util.Log.e("NotificationsFragment", "btnMenu é NULL!");
-            }
-        } catch (Exception e) {
-            android.util.Log.e("NotificationsFragment", "Erro em setupListeners", e);
-            e.printStackTrace();
+        // Botão Menu
+        if (btnMenu != null) {
+            btnMenu.setOnClickListener(v -> {
+                Log.d(TAG, "Menu button clicked");
+                Intent intent = new Intent(getContext(), MenuOptionsActivity.class);
+                startActivity(intent);
+            });
+            Log.d(TAG, "Menu button listener configurado");
+        } else {
+            Log.e(TAG, "btnMenu is null!");
+        }
+        
+        // Botão Marcar Todas como Lidas
+        if (btnMarkAllRead != null) {
+            btnMarkAllRead.setOnClickListener(v -> markAllAsRead());
         }
     }
     
     private void observeViewModel() {
-        try {
-            if (viewModel == null) return;
-            
-            // Observa lista de notificações
-            viewModel.getNotifications().observe(getViewLifecycleOwner(), notifications -> {
-                try {
-                    if (adapter == null || recyclerView == null || txtEmpty == null || btnMarkAllRead == null) return;
-                    
-                    if (notifications != null && !notifications.isEmpty()) {
-                        adapter.updateNotifications(notifications);
-                        txtEmpty.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
-                        btnMarkAllRead.setVisibility(hasUnreadNotifications(notifications) ? View.VISIBLE : View.GONE);
-                    } else {
-                        txtEmpty.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);
-                        btnMarkAllRead.setVisibility(View.GONE);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            
-            // Observa estado de carregamento
-            viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-                try {
-                    if (progressBar != null) {
-                        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            
-            // Observa mensagens de erro
-            viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-                try {
-                    if (error != null && !error.isEmpty() && getContext() != null) {
-                        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Observa lista de notificações
+        viewModel.getNotifications().observe(getViewLifecycleOwner(), notifications -> {
+            if (notifications != null && !notifications.isEmpty()) {
+                adapter.setNotifications(notifications);
+                updateSavedStates();
+                txtEmpty.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                
+                // Mostra botão marcar todas como lidas se houver não lidas
+                boolean hasUnread = notifications.stream().anyMatch(n -> !n.isRead());
+                containerMarkAllRead.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
+            } else {
+                txtEmpty.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                containerMarkAllRead.setVisibility(View.GONE);
+            }
+        });
+        
+        // Observa estado de carregamento
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+        
+        // Observa mensagens de erro
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+            }
+        });
     }
     
-    private boolean hasUnreadNotifications(java.util.List<ao.co.isptec.aplm.anunciosloc.data.model.Notification> notifications) {
-        for (ao.co.isptec.aplm.anunciosloc.data.model.Notification notification : notifications) {
-            if (!notification.isRead()) {
-                return true;
+    /**
+     * Atualiza o estado de "guardado" de todas as notificações
+     */
+    private void updateSavedStates() {
+        Set<String> savedIds = getSavedAnnouncementIds();
+        List<Notification> notifications = adapter.getNotifications();
+        
+        for (Notification notification : notifications) {
+            if ("ANNOUNCEMENT".equals(notification.getType()) && notification.getRelatedId() != null) {
+                boolean isSaved = savedIds.contains(notification.getRelatedId());
+                // Você pode adicionar um campo no Notification para armazenar se está guardado
+                // Por agora, vamos gerenciar isso no adapter
             }
         }
-        return false;
+        
+        adapter.notifyDataSetChanged();
     }
     
-    private void loadMockNotifications() {
-        try {
-            // Cria lista de notificações mockadas
-            java.util.List<ao.co.isptec.aplm.anunciosloc.data.model.Notification> mockNotifications = new java.util.ArrayList<>();
-            
-            // Notificação 1 - Nova promoção
-            ao.co.isptec.aplm.anunciosloc.data.model.Notification notif1 = new ao.co.isptec.aplm.anunciosloc.data.model.Notification();
-            notif1.setId("notif_1");
-            notif1.setTitle("Nova Promoção Disponível");
-            notif1.setMessage("Promoção de Natal - 50% OFF está disponível no Shopping Colombo!");
-            notif1.setType("ANNOUNCEMENT");
-            notif1.setRelatedId("mock_1");
-            notif1.setTimestamp(System.currentTimeMillis() - 3600000); // 1 hora atrás
-            notif1.setRead(false);
-            mockNotifications.add(notif1);
-            
-            // Notificação 2 - Novo local próximo
-            ao.co.isptec.aplm.anunciosloc.data.model.Notification notif2 = new ao.co.isptec.aplm.anunciosloc.data.model.Notification();
-            notif2.setId("notif_2");
-            notif2.setTitle("Você está próximo!");
-            notif2.setMessage("Novo Café Aroma inaugurado na Universidade de Lisboa. Confira!");
-            notif2.setType("LOCATION");
-            notif2.setRelatedId("loc_2");
-            notif2.setTimestamp(System.currentTimeMillis() - 7200000); // 2 horas atrás
-            notif2.setRead(false);
-            mockNotifications.add(notif2);
-            
-            // Notificação 3 - Workshop
-            ao.co.isptec.aplm.anunciosloc.data.model.Notification notif3 = new ao.co.isptec.aplm.anunciosloc.data.model.Notification();
-            notif3.setId("notif_3");
-            notif3.setTitle("Workshop Gratuito Amanhã");
-            notif3.setMessage("Não perca! Workshop de Programação Android no Centro de Inovação ISPTEC.");
-            notif3.setType("ANNOUNCEMENT");
-            notif3.setRelatedId("mock_3");
-            notif3.setTimestamp(System.currentTimeMillis() - 86400000); // 1 dia atrás
-            notif3.setRead(true);
-            mockNotifications.add(notif3);
-            
-            // Notificação 4 - Sistema
-            ao.co.isptec.aplm.anunciosloc.data.model.Notification notif4 = new ao.co.isptec.aplm.anunciosloc.data.model.Notification();
-            notif4.setId("notif_4");
-            notif4.setTitle("Bem-vindo ao AnunciosLoc!");
-            notif4.setMessage("Complete seu perfil para receber anúncios personalizados baseados nos seus interesses.");
-            notif4.setType("SYSTEM");
-            notif4.setRelatedId(null);
-            notif4.setTimestamp(System.currentTimeMillis() - 172800000); // 2 dias atrás
-            notif4.setRead(true);
-            mockNotifications.add(notif4);
-            
-            // Notificação 5 - Novo anúncio próximo
-            ao.co.isptec.aplm.anunciosloc.data.model.Notification notif5 = new ao.co.isptec.aplm.anunciosloc.data.model.Notification();
-            notif5.setId("notif_5");
-            notif5.setTitle("Novidade na sua área");
-            notif5.setMessage("3 novos anúncios foram publicados próximos à sua localização atual.");
-            notif5.setType("SYSTEM");
-            notif5.setRelatedId(null);
-            notif5.setTimestamp(System.currentTimeMillis() - 259200000); // 3 dias atrás
-            notif5.setRead(true);
-            mockNotifications.add(notif5);
-            
-            // Atualiza o adapter com os dados mockados
-            if (adapter != null) {
-                adapter.updateNotifications(mockNotifications);
-                
-                // Atualiza visibilidade
-                if (recyclerView != null && txtEmpty != null) {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    txtEmpty.setVisibility(View.GONE);
-                }
-                
-                // Mostra botão de marcar todas como lidas se houver não lidas
-                if (btnMarkAllRead != null) {
-                    btnMarkAllRead.setVisibility(hasUnreadNotifications(mockNotifications) ? View.VISIBLE : View.GONE);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    /**
+     * Marca todas as notificações como lidas
+     */
+    private void markAllAsRead() {
+        List<Notification> notifications = adapter.getNotifications();
+        
+        if (notifications.isEmpty()) {
+            return;
+        }
+        
+        for (Notification notification : notifications) {
+            notification.setRead(true);
+        }
+        
+        adapter.notifyDataSetChanged();
+        
+        // Atualiza no ViewModel
+        viewModel.markAllAsRead();
+        
+        // Oculta o botão
+        containerMarkAllRead.setVisibility(View.GONE);
+        
+        Toast.makeText(getContext(), "Todas as notificações foram marcadas como lidas", Toast.LENGTH_SHORT).show();
+    }
+    
+    @Override
+    public void onViewNotification(Notification notification) {
+        Log.d(TAG, "onViewNotification: " + notification.getTitle());
+        
+        // Marca como lida
+        notification.setRead(true);
+        adapter.notifyDataSetChanged();
+        
+        // Abre apenas se for do tipo ANNOUNCEMENT
+        if ("ANNOUNCEMENT".equals(notification.getType()) && notification.getRelatedId() != null) {
+            Intent intent = new Intent(getContext(), AnnouncementDetailActivity.class);
+            intent.putExtra("announcement_id", notification.getRelatedId());
+            startActivity(intent);
+        } else {
+            Toast.makeText(getContext(), "Detalhes da notificação: " + notification.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
     
     @Override
-    public void onResume() {
-        super.onResume();
-        viewModel.loadNotifications();
+    public void onSaveNotification(Notification notification) {
+        Log.d(TAG, "onSaveNotification: " + notification.getTitle());
+        
+        // Apenas salva se for do tipo ANNOUNCEMENT
+        if (!"ANNOUNCEMENT".equals(notification.getType()) || notification.getRelatedId() == null) {
+            Toast.makeText(getContext(), "Apenas anúncios podem ser guardados", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Set<String> savedIds = getSavedAnnouncementIds();
+        String announcementId = notification.getRelatedId();
+        
+        if (savedIds.contains(announcementId)) {
+            // Remove dos guardados
+            savedIds.remove(announcementId);
+            saveSavedAnnouncementIds(savedIds);
+            Toast.makeText(getContext(), "Anúncio removido dos guardados", Toast.LENGTH_SHORT).show();
+        } else {
+            // Adiciona aos guardados
+            savedIds.add(announcementId);
+            saveSavedAnnouncementIds(savedIds);
+            Toast.makeText(getContext(), "Anúncio guardado com sucesso!", Toast.LENGTH_SHORT).show();
+        }
+        
+        // Atualiza o adapter
+        adapter.notifyDataSetChanged();
+    }
+    
+    /**
+     * Verifica se um anúncio está guardado
+     */
+    public boolean isAnnouncementSaved(String announcementId) {
+        Set<String> savedIds = getSavedAnnouncementIds();
+        return savedIds.contains(announcementId);
+    }
+    
+    /**
+     * Obtém os IDs dos anúncios guardados
+     */
+    private Set<String> getSavedAnnouncementIds() {
+        if (prefs == null) return new HashSet<>();
+        return new HashSet<>(prefs.getStringSet(KEY_SAVED_IDS, new HashSet<>()));
+    }
+    
+    /**
+     * Salva os IDs dos anúncios guardados
+     */
+    private void saveSavedAnnouncementIds(Set<String> ids) {
+        if (prefs != null) {
+            prefs.edit().putStringSet(KEY_SAVED_IDS, ids).apply();
+        }
+    }
+    
+    /**
+     * Carrega notificações mockadas para teste
+     */
+    private void loadMockNotifications() {
+        List<Notification> mockNotifications = new ArrayList<>();
+        
+        // Notificação 1 - Promoção Restaurante
+        Notification n1 = new Notification();
+        n1.setId("notif1");
+        n1.setTitle("🍕 Promoção Especial - Pizza Margherita");
+        n1.setMessage("Desfrute de 30% de desconto em todas as pizzas hoje! Válido apenas na Pizzaria Bella Napoli. Localização: Centro Comercial Colombo. Autor: Restaurante Bella Napoli");
+        n1.setType("ANNOUNCEMENT");
+        n1.setRelatedId("ann1");
+        n1.setRead(false);
+        n1.setTimestamp(System.currentTimeMillis());
+        mockNotifications.add(n1);
+        
+        // Notificação 2 - Evento Academia
+        Notification n2 = new Notification();
+        n2.setId("notif2");
+        n2.setTitle("💪 Aula Experimental de Yoga Grátis");
+        n2.setMessage("Participe da nossa aula experimental de yoga amanhã às 18h. Inscrições limitadas! Localização: Academia Fitness Plus, Avenida da República. Autor: Academia Fitness Plus");
+        n2.setType("ANNOUNCEMENT");
+        n2.setRelatedId("ann2");
+        n2.setRead(false);
+        n2.setTimestamp(System.currentTimeMillis() - 3600000); // 1 hora atrás
+        mockNotifications.add(n2);
+        
+        // Notificação 3 - Livraria
+        Notification n3 = new Notification();
+        n3.setId("notif3");
+        n3.setTitle("📚 Lançamento de Livro com Sessão de Autógrafos");
+        n3.setMessage("Não perca o lançamento do novo livro 'Aventuras em Lisboa' com sessão de autógrafos no sábado às 15h. Localização: Livraria Bertrand, Chiado. Autor: Livraria Bertrand");
+        n3.setType("ANNOUNCEMENT");
+        n3.setRelatedId("ann3");
+        n3.setRead(false);
+        n3.setTimestamp(System.currentTimeMillis() - 7200000); // 2 horas atrás
+        mockNotifications.add(n3);
+        
+        // Notificação 4 - Café
+        Notification n4 = new Notification();
+        n4.setId("notif4");
+        n4.setTitle("☕ Happy Hour - Café e Bolo por 5€");
+        n4.setMessage("De segunda a sexta, das 15h às 17h, desfrute do nosso Happy Hour: café expresso + fatia de bolo por apenas 5€. Localização: Café Central, Rossio. Autor: Café Central");
+        n4.setType("ANNOUNCEMENT");
+        n4.setRelatedId("ann4");
+        n4.setRead(false);
+        n4.setTimestamp(System.currentTimeMillis() - 10800000); // 3 horas atrás
+        mockNotifications.add(n4);
+        
+        // Notificação 5 - Loja de Tecnologia
+        Notification n5 = new Notification();
+        n5.setId("notif5");
+        n5.setTitle("🎧 Saldos de Verão - Até 50% OFF");
+        n5.setMessage("Aproveite os saldos de verão com descontos até 50% em smartphones, tablets e acessórios. Localização: TechStore, Centro Comercial Vasco da Gama. Autor: TechStore Lisboa");
+        n5.setType("ANNOUNCEMENT");
+        n5.setRelatedId("ann5");
+        n5.setRead(false);
+        n5.setTimestamp(System.currentTimeMillis() - 14400000); // 4 horas atrás
+        mockNotifications.add(n5);
+        
+        // Atualiza o adapter
+        adapter.setNotifications(mockNotifications);
+        updateSavedStates();
+        
+        txtEmpty.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        containerMarkAllRead.setVisibility(View.VISIBLE);
     }
 }

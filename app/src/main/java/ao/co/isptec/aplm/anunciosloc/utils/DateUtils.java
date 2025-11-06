@@ -116,4 +116,35 @@ public class DateUtils {
         
         return true;
     }
+    
+    /**
+     * Formata um timestamp em tempo relativo (ex: "Há 5 minutos", "Há 2 horas")
+     */
+    public static String formatRelativeTime(long timestamp) {
+        if (timestamp <= 0) return "Agora";
+        
+        long diffInMillis = System.currentTimeMillis() - timestamp;
+        
+        if (diffInMillis < 0) {
+            return "Agora";
+        }
+        
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(diffInMillis);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+        long hours = TimeUnit.MILLISECONDS.toHours(diffInMillis);
+        long days = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+        
+        if (seconds < 60) {
+            return "Agora";
+        } else if (minutes < 60) {
+            return "Há " + minutes + (minutes == 1 ? " minuto" : " minutos");
+        } else if (hours < 24) {
+            return "Há " + hours + (hours == 1 ? " hora" : " horas");
+        } else if (days < 7) {
+            return "Há " + days + (days == 1 ? " dia" : " dias");
+        } else {
+            // Mais de 7 dias, mostra a data
+            return formatDate(timestamp);
+        }
+    }
 }
