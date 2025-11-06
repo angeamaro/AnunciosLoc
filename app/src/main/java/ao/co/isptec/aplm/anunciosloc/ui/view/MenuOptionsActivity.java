@@ -12,6 +12,7 @@ import com.google.android.material.card.MaterialCardView;
 import ao.co.isptec.aplm.anunciosloc.MainActivity;
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.activities.InterestsActivity;
+import ao.co.isptec.aplm.anunciosloc.ui.view.activities.PoliciesActivity;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
 
 /**
@@ -69,7 +70,8 @@ public class MenuOptionsActivity extends AppCompatActivity {
         });
 
         cardPoliticas.setOnClickListener(v -> {
-            Toast.makeText(this, "Políticas - Em desenvolvimento", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, PoliciesActivity.class);
+            startActivity(intent);
         });
 
         cardSair.setOnClickListener(v -> {

@@ -93,6 +93,12 @@
             android:exported="false"
             android:parentActivityName=".activities.InterestsActivity" />
         
+        <!-- Policies Activity -->
+        <activity
+            android:name=".ui.view.activities.PoliciesActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MenuOptionsActivity" />
+        
     </application>
 
 </manifest>
