@@ -62,6 +62,14 @@
             android:name=".activities.ProfileActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".activities.ChangePasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false" />
+
         
         <!-- Location Activities -->
         <activity
