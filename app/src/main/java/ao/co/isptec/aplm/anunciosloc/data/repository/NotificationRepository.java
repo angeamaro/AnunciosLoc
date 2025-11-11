@@ -33,41 +33,50 @@ public class NotificationRepository {
      * Inicializa dados mockados
      */
     private void initializeMockData() {
-        // Notificação 1
+        // Notificação 1 - Anúncio 2: Promoção de Verão
         Notification notif1 = new Notification("1", 
             Constants.NOTIFICATION_NEW_ANNOUNCEMENT,
-            "Novo Anúncio Disponível",
-            "Workshop de Programação no ISPTEC");
-        notif1.setRelatedId("1");
-        notif1.setTimestamp(System.currentTimeMillis() - (2 * 60 * 60 * 1000)); // 2 horas atrás
+            "🍕 Promoção de Verão",
+            "Descontos em todas as lojas! Válido até o fim do mês.");
+        notif1.setRelatedId("2"); // ID do anúncio "Promoção de Verão"
+        notif1.setTimestamp(System.currentTimeMillis());
         notificationsDatabase.put(notif1.getId(), notif1);
         
-        // Notificação 2
+        // Notificação 2 - Anúncio 3: Torneio de Futebol
         Notification notif2 = new Notification("2",
-            Constants.NOTIFICATION_LOCATION_ENTERED,
-            "Você entrou em uma nova área",
-            "Existem anúncios disponíveis para Belas Shopping");
-        notif2.setRelatedId("5");
-        notif2.setTimestamp(System.currentTimeMillis() - (24 * 60 * 60 * 1000)); // 1 dia atrás
-        notif2.setRead(true);
+            Constants.NOTIFICATION_NEW_ANNOUNCEMENT,
+            "💪 Torneio de Futebol",
+            "Inscreva sua equipe no torneio comunitário. Amantes de desporto bem-vindos!");
+        notif2.setRelatedId("3"); // ID do anúncio "Torneio de Futebol"
+        notif2.setTimestamp(System.currentTimeMillis() - (1 * 60 * 60 * 1000)); // 1 hora atrás
         notificationsDatabase.put(notif2.getId(), notif2);
         
-        // Notificação 3
+        // Notificação 3 - Anúncio 4: Visita Guiada Histórica
         Notification notif3 = new Notification("3",
-            Constants.NOTIFICATION_MESSAGE_RECEIVED,
-            "Mensagem Recebida via P2P",
-            "Você recebeu um anúncio de Alice Silva");
-        notif3.setTimestamp(System.currentTimeMillis() - (4 * 60 * 60 * 1000)); // 4 horas atrás
+            Constants.NOTIFICATION_NEW_ANNOUNCEMENT,
+            "📚 Visita Guiada Histórica",
+            "Conheça a história de Luanda através dos seus monumentos.");
+        notif3.setRelatedId("4"); // ID do anúncio "Visita Guiada Histórica"
+        notif3.setTimestamp(System.currentTimeMillis() - (2 * 60 * 60 * 1000)); // 2 horas atrás
         notificationsDatabase.put(notif3.getId(), notif3);
         
-        // Notificação 4
+        // Notificação 4 - Anúncio 1: Workshop de Programação
         Notification notif4 = new Notification("4",
             Constants.NOTIFICATION_NEW_ANNOUNCEMENT,
-            "Novo Evento Cultural",
-            "Visita Guiada Histórica na Fortaleza de São Miguel");
-        notif4.setRelatedId("4");
-        notif4.setTimestamp(System.currentTimeMillis() - (30 * 60 * 1000)); // 30 minutos atrás
+            "☕ Workshop de Programação",
+            "Venha aprender Java e Android! Inscrições abertas para estudantes.");
+        notif4.setRelatedId("1"); // ID do anúncio "Workshop de Programação"
+        notif4.setTimestamp(System.currentTimeMillis() - (3 * 60 * 60 * 1000)); // 3 horas atrás
         notificationsDatabase.put(notif4.getId(), notif4);
+        
+        // Notificação 5 - Anúncio 6: Hackathon 2025
+        Notification notif5 = new Notification("5",
+            Constants.NOTIFICATION_NEW_ANNOUNCEMENT,
+            "🎧 Hackathon 2025",
+            "48 horas de código, inovação e prêmios! Interessados em tecnologia, participem!");
+        notif5.setRelatedId("6"); // ID do anúncio "Hackathon 2025"
+        notif5.setTimestamp(System.currentTimeMillis() - (4 * 60 * 60 * 1000)); // 4 horas atrás
+        notificationsDatabase.put(notif5.getId(), notif5);
     }
     
     /**

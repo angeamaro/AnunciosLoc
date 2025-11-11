@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -36,6 +37,7 @@ import ao.co.isptec.aplm.anunciosloc.utils.ValidationUtils;
  */
 public class AddLocationActivity extends AppCompatActivity {
     
+    private static final String TAG = "AddLocationActivity";
     public static final String EXTRA_LOCATION_ID = "location_id";
     public static final String EXTRA_EDIT_MODE = "edit_mode";
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
@@ -117,7 +119,12 @@ public class AddLocationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(isEditMode ? R.string.edit_location : R.string.add_location);
+            
+            // Define o título baseado no modo
+            String title = isEditMode ? getString(R.string.edit_location) : getString(R.string.add_location);
+            getSupportActionBar().setTitle(title);
+            
+            android.util.Log.d(TAG, "setupToolbar - isEditMode: " + isEditMode + ", Title: " + title);
         }
         
         toolbar.setNavigationOnClickListener(v -> finish());
@@ -192,7 +199,11 @@ public class AddLocationActivity extends AppCompatActivity {
         // Observa sucesso de criação
         viewModel.getLocationCreated().observe(this, success -> {
             if (success != null && success) {
-                Toast.makeText(this, R.string.success_location_created, Toast.LENGTH_SHORT).show();
+                if (isGPSMode) {
+                    Toast.makeText(this, "Localização criada com sucesso! Visualize no mapa na aba Localizações.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, R.string.success_location_created, Toast.LENGTH_SHORT).show();
+                }
                 finish();
             }
         });
@@ -271,9 +282,9 @@ public class AddLocationActivity extends AppCompatActivity {
                     btnGetLocation.setEnabled(true);
                     
                     if (location != null) {
-                        // Preenche os campos
-                        editLatitude.setText(String.format("%.6f", location.getLatitude()));
-                        editLongitude.setText(String.format("%.6f", location.getLongitude()));
+                        // Preenche os campos usando formato US (ponto como separador decimal)
+                        editLatitude.setText(String.format(java.util.Locale.US, "%.6f", location.getLatitude()));
+                        editLongitude.setText(String.format(java.util.Locale.US, "%.6f", location.getLongitude()));
                         Toast.makeText(this, "Localização obtida com sucesso!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "Não foi possível obter a localização. Tente novamente.", 
@@ -350,6 +361,8 @@ public class AddLocationActivity extends AppCompatActivity {
         // Validações
         String name = editName.getText().toString().trim();
         
+        Log.d(TAG, "saveLocation() called - isGPSMode: " + isGPSMode);
+        
         if (name.isEmpty()) {
             editName.setError(getString(R.string.error_empty_field));
             editName.requestFocus();
@@ -365,27 +378,40 @@ public class AddLocationActivity extends AppCompatActivity {
             String latStr = editLatitude.getText().toString().trim();
             String lonStr = editLongitude.getText().toString().trim();
             
+            Log.d(TAG, "GPS Mode - Raw Latitude: '" + latStr + "', Raw Longitude: '" + lonStr + "'");
+            
             if (latStr.isEmpty() || lonStr.isEmpty()) {
                 Toast.makeText(this, "Por favor, obtenha a localização GPS", Toast.LENGTH_SHORT).show();
                 return;
             }
             
             try {
+                // Remove espaços em branco e caracteres invisíveis
+                latStr = latStr.replaceAll("\\s+", "");
+                lonStr = lonStr.replaceAll("\\s+", "");
+                
+                // Substitui vírgula por ponto (para localizações que usam vírgula como separador decimal)
+                latStr = latStr.replace(",", ".");
+                lonStr = lonStr.replace(",", ".");
+                
                 latitude = Double.parseDouble(latStr);
                 longitude = Double.parseDouble(lonStr);
+                
+                Log.d(TAG, "Parsed coordinates - Lat: " + latitude + ", Lon: " + longitude);
             } catch (NumberFormatException e) {
-                Toast.makeText(this, "Valores de coordenadas inválidos", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error parsing coordinates: " + e.getMessage());
+                Toast.makeText(this, "Valores de coordenadas inválidos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
             
             // Valida coordenadas
             if (!ValidationUtils.isValidLatitude(latitude)) {
-                Toast.makeText(this, "Latitude inválida (deve estar entre -90 e 90)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Latitude inválida (deve estar entre -90 e 90). Valor: " + latitude, Toast.LENGTH_LONG).show();
                 return;
             }
             
             if (!ValidationUtils.isValidLongitude(longitude)) {
-                Toast.makeText(this, "Longitude inválida (deve estar entre -180 e 180)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Longitude inválida (deve estar entre -180 e 180). Valor: " + longitude, Toast.LENGTH_LONG).show();
                 return;
             }
         } else {

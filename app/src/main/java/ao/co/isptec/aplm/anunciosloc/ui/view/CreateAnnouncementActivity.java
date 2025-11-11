@@ -52,7 +52,7 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
     private TextInputEditText editTitle, editContent;
     private TextInputEditText editStartDate, editEndDate, editStartTime, editEndTime;
     private AutoCompleteTextView spinnerLocation;
-    private RadioGroup radioGroupPolicy;
+    private RadioGroup radioGroupPolicy, radioGroupDeliveryMode;
     private MaterialButton btnSave, btnConfigurePolicy, btnCreateLocation;
     private ProgressBar progressBar;
     
@@ -65,6 +65,7 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
     private long startDateTimestamp = 0;
     private long endDateTimestamp = 0;
     private String selectedPolicy = Constants.DELIVERY_POLICY_EVERYONE;
+    private String selectedDeliveryMode = Constants.DELIVERY_MODE_CENTRALIZED;
     private PolicyFilter policyFilter;
     
     private ActivityResultLauncher<Intent> createLocationLauncher;
@@ -174,6 +175,7 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
         editEndTime = findViewById(R.id.editEndTime);
         spinnerLocation = findViewById(R.id.spinnerLocation);
         radioGroupPolicy = findViewById(R.id.radioGroupPolicy);
+        radioGroupDeliveryMode = findViewById(R.id.radioGroupDeliveryMode);
         btnSave = findViewById(R.id.btnSave);
         btnConfigurePolicy = findViewById(R.id.btnConfigurePolicy);
         btnCreateLocation = findViewById(R.id.btnCreateLocation);
@@ -225,6 +227,15 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
             } else if (checkedId == R.id.radioBlacklist) {
                 selectedPolicy = Constants.DELIVERY_POLICY_BLACKLIST;
                 btnConfigurePolicy.setVisibility(View.VISIBLE);
+            }
+        });
+        
+        // Delivery mode selection
+        radioGroupDeliveryMode.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radioCentralized) {
+                selectedDeliveryMode = Constants.DELIVERY_MODE_CENTRALIZED;
+            } else if (checkedId == R.id.radioDecentralized) {
+                selectedDeliveryMode = Constants.DELIVERY_MODE_DECENTRALIZED;
             }
         });
         
@@ -458,7 +469,8 @@ public class CreateAnnouncementActivity extends AppCompatActivity {
             startDateTimestamp,
             endDateTimestamp,
             selectedPolicy,
-            policyFilter
+            policyFilter,
+            selectedDeliveryMode
         );
     }
 }

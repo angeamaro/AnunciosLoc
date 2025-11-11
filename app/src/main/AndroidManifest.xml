@@ -81,6 +81,11 @@
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.view.MainActivity" />
         
+        <activity
+            android:name=".ui.view.LocationDetailsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MainActivity" />
+        
         <!-- Announcement Activities -->
         <activity
             android:name=".ui.view.CreateAnnouncementActivity"

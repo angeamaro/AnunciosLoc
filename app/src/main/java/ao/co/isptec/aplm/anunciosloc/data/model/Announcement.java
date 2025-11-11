@@ -23,6 +23,9 @@ public class Announcement {
     private Date startDate; // Data de início da validade
     private Date endDate; // Data de fim da validade
     
+    // Tipo de entrega
+    private String deliveryMode; // CENTRALIZED ou DECENTRALIZED
+    
     // Política de entrega
     private String deliveryPolicy; // WHITELIST, BLACKLIST ou EVERYONE
     private List<PolicyRule> policyRules; // Regras de filtragem
@@ -40,6 +43,7 @@ public class Announcement {
         this.status = Constants.STATUS_ACTIVE;
         this.policyRules = new ArrayList<>();
         this.deliveryPolicy = Constants.POLICY_EVERYONE;
+        this.deliveryMode = Constants.DELIVERY_MODE_CENTRALIZED;
         this.viewCount = 0;
         this.isLocal = false;
     }
@@ -132,6 +136,14 @@ public class Announcement {
     
     public void setDeliveryPolicy(String deliveryPolicy) {
         this.deliveryPolicy = deliveryPolicy;
+    }
+    
+    public String getDeliveryMode() {
+        return deliveryMode;
+    }
+    
+    public void setDeliveryMode(String deliveryMode) {
+        this.deliveryMode = deliveryMode;
     }
     
     public List<PolicyRule> getPolicyRules() {

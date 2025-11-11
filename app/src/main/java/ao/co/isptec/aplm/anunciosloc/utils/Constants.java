@@ -31,6 +31,10 @@ public class Constants {
     public static final String DELIVERY_POLICY_BLACKLIST = "BLACKLIST";
     public static final String DELIVERY_POLICY_EVERYONE = "EVERYONE";
     
+    // Modos de Entrega
+    public static final String DELIVERY_MODE_CENTRALIZED = "CENTRALIZED";
+    public static final String DELIVERY_MODE_DECENTRALIZED = "DECENTRALIZED";
+    
     // Status de Anúncio
     public static final String STATUS_ACTIVE = "ACTIVE";
     public static final String STATUS_EXPIRED = "EXPIRED";
