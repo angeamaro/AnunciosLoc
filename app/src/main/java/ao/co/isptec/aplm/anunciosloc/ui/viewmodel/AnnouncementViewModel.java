@@ -83,7 +83,7 @@ public class AnnouncementViewModel extends ViewModel {
      * Carrega todos os anúncios ativos
      */
     public void loadAnnouncements() {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {
@@ -102,7 +102,7 @@ public class AnnouncementViewModel extends ViewModel {
      * Carrega anúncios filtrados por política de usuário
      */
     public void loadAnnouncementsForUser(Map<String, String> userAttributes) {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {
@@ -121,7 +121,7 @@ public class AnnouncementViewModel extends ViewModel {
      * Carrega anúncios de um usuário específico
      */
     public void loadUserAnnouncements(String userId) {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {
@@ -140,7 +140,7 @@ public class AnnouncementViewModel extends ViewModel {
      * Carrega anúncios de uma localização específica
      */
     public void loadLocationAnnouncements(String locationId) {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {
@@ -159,8 +159,8 @@ public class AnnouncementViewModel extends ViewModel {
      * Cria novo anúncio
      */
     public void createAnnouncement(Announcement announcement) {
-        isLoading.setValue(true);
-        errorMessage.setValue(null);
+        isLoading.postValue(true);
+        errorMessage.postValue(null);
         
         new Thread(() -> {
             try {
@@ -190,7 +190,7 @@ public class AnnouncementViewModel extends ViewModel {
      */
     public void createAnnouncement(String title, String content, String locationId, 
                                    long startDate, long endDate, String deliveryPolicy, 
-                                   PolicyFilter policyFilter) {
+                                   PolicyFilter policyFilter, String deliveryMode) {
         // Converte PolicyFilter em PolicyRules
         List<ao.co.isptec.aplm.anunciosloc.data.model.PolicyRule> policyRules = null;
         if (policyFilter != null && !policyFilter.isEmpty()) {
@@ -213,6 +213,7 @@ public class AnnouncementViewModel extends ViewModel {
         announcement.setEndDate(new java.util.Date(endDate));
         announcement.setDeliveryPolicy(deliveryPolicy);
         announcement.setPolicyRules(policyRules);
+        announcement.setDeliveryMode(deliveryMode);
         
         // Define autor (usuário atual)
         User currentUser = userRepository.getCurrentUser();
@@ -229,8 +230,8 @@ public class AnnouncementViewModel extends ViewModel {
      * Atualiza anúncio
      */
     public void updateAnnouncement(Announcement announcement) {
-        isLoading.setValue(true);
-        errorMessage.setValue(null);
+        isLoading.postValue(true);
+        errorMessage.postValue(null);
         
         new Thread(() -> {
             try {
@@ -259,8 +260,8 @@ public class AnnouncementViewModel extends ViewModel {
      * Deleta anúncio
      */
     public void deleteAnnouncement(String announcementId) {
-        isLoading.setValue(true);
-        errorMessage.setValue(null);
+        isLoading.postValue(true);
+        errorMessage.postValue(null);
         
         new Thread(() -> {
             try {
@@ -300,7 +301,7 @@ public class AnnouncementViewModel extends ViewModel {
      * Busca anúncios
      */
     public void searchAnnouncements(String query) {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {
@@ -319,7 +320,7 @@ public class AnnouncementViewModel extends ViewModel {
      * Carrega anúncios recentes
      */
     public void loadRecentAnnouncements() {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {

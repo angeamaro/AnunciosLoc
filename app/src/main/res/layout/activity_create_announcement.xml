@@ -211,6 +211,60 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
+            <!-- Tipo de Entrega -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo de Entrega"
+                android:textColor="@color/gray_900"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupDeliveryMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioCentralized"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Centralizada (via Servidor)"
+                    android:checked="true"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="O servidor notifica automaticamente os clientes quando estes reportam a sua localização. Requer conexão com o servidor."
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioDecentralized"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descentralizada (P2P WiFi Direct)"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Você entrega diretamente a mensagem a dispositivos próximos usando WiFi Direct. Funciona offline, mas requer proximidade física."
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp" />
+            </RadioGroup>
+
             <!-- Política de Entrega -->
             <TextView
                 android:layout_width="wrap_content"

@@ -241,6 +241,7 @@ public class AnnouncementsFragment extends Fragment {
         // Recarrega os IDs salvos quando o fragment retoma
         loadSavedIds();
         adapter.setSavedAnnouncementIds(savedAnnouncementIds);
-        updateAnnouncementsList();
+        // Recarrega os anúncios do servidor para pegar novos anúncios
+        viewModel.loadAnnouncements();
     }
 }
