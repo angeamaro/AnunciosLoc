@@ -43,17 +43,18 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
     private static final String TAG = "NotificationsFragment";
     private static final String PREFS_NAME = "saved_announcements";
     private static final String KEY_SAVED_IDS = "saved_ids";
+    private static final String KEY_NOTIFICATIONS_STATE = "notifications_state";
+    private static final String KEY_READ_IDS = "read_notification_ids";
     
     private RecyclerView recyclerView;
     private NotificationAdapter adapter;
     private ProgressBar progressBar;
     private LinearLayout txtEmpty;
-    private MaterialButton btnMarkAllRead;
     private ImageButton btnMenu;
-    private LinearLayout containerMarkAllRead;
     
     private NotificationViewModel viewModel;
     private SharedPreferences prefs;
+    private List<Notification> currentNotifications = new ArrayList<>();
     
     @Nullable
     @Override
@@ -67,8 +68,16 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
         setupListeners();
         observeViewModel();
         
-        // Carrega notificações mockadas
-        loadMockNotifications();
+        // Restaura notificações salvas ou carrega mockadas
+        if (savedInstanceState != null) {
+            restoreNotificationsState(savedInstanceState);
+        } else if (currentNotifications.isEmpty()) {
+            loadMockNotifications();
+        } else {
+            // Já temos notificações (fragment não foi destruído completamente)
+            adapter.setNotifications(currentNotifications);
+            updateUI();
+        }
         
         return view;
     }
@@ -77,9 +86,7 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
         recyclerView = view.findViewById(R.id.recyclerNotifications);
         progressBar = view.findViewById(R.id.progressBar);
         txtEmpty = view.findViewById(R.id.txtEmpty);
-        btnMarkAllRead = view.findViewById(R.id.btnMarkAllRead);
         btnMenu = view.findViewById(R.id.btnMenu);
-        containerMarkAllRead = view.findViewById(R.id.containerMarkAllRead);
         
         Log.d(TAG, "Views inicializadas - btnMenu: " + (btnMenu != null));
     }
@@ -92,6 +99,7 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
     
     private void initializeViewModel() {
         viewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
+        // NÃO carrega notificações do ViewModel - usamos notificações mockadas do fragment
     }
     
     private void setupRecyclerView() {
@@ -114,40 +122,35 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
         } else {
             Log.e(TAG, "btnMenu is null!");
         }
-        
-        // Botão Marcar Todas como Lidas
-        if (btnMarkAllRead != null) {
-            btnMarkAllRead.setOnClickListener(v -> markAllAsRead());
-        }
     }
     
     private void observeViewModel() {
-        // Observa lista de notificações
+        // Observer removido - usamos notificações mockadas do fragment ao invés do Repository
+        // Se quiser usar o Repository no futuro, descomente abaixo e remova loadMockNotifications()
+        
+        /*
         viewModel.getNotifications().observe(getViewLifecycleOwner(), notifications -> {
             if (notifications != null && !notifications.isEmpty()) {
+                currentNotifications = notifications;
                 adapter.setNotifications(notifications);
                 updateSavedStates();
                 txtEmpty.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
-                
-                // Mostra botão marcar todas como lidas se houver não lidas
-                boolean hasUnread = notifications.stream().anyMatch(n -> !n.isRead());
-                containerMarkAllRead.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
             } else {
                 txtEmpty.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
-                containerMarkAllRead.setVisibility(View.GONE);
             }
         });
+        */
         
-        // Observa estado de carregamento
+        // Observa estado de carregamento (mantido para possível uso futuro)
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null) {
                 progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             }
         });
         
-        // Observa mensagens de erro
+        // Observa mensagens de erro (mantido para possível uso futuro)
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
@@ -173,38 +176,23 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
         adapter.notifyDataSetChanged();
     }
     
-    /**
-     * Marca todas as notificações como lidas
-     */
-    private void markAllAsRead() {
-        List<Notification> notifications = adapter.getNotifications();
-        
-        if (notifications.isEmpty()) {
-            return;
-        }
-        
-        for (Notification notification : notifications) {
-            notification.setRead(true);
-        }
-        
-        adapter.notifyDataSetChanged();
-        
-        // Atualiza no ViewModel
-        viewModel.markAllAsRead();
-        
-        // Oculta o botão
-        containerMarkAllRead.setVisibility(View.GONE);
-        
-        Toast.makeText(getContext(), "Todas as notificações foram marcadas como lidas", Toast.LENGTH_SHORT).show();
-    }
-    
     @Override
     public void onViewNotification(Notification notification) {
         Log.d(TAG, "onViewNotification: " + notification.getTitle());
         
         // Marca como lida
         notification.setRead(true);
+        
+        // Atualiza na lista atual
+        for (Notification n : currentNotifications) {
+            if (n.getId().equals(notification.getId())) {
+                n.setRead(true);
+                break;
+            }
+        }
+        
         adapter.notifyDataSetChanged();
+        updateUI();
         
         // Abre apenas se for do tipo ANNOUNCEMENT
         if ("ANNOUNCEMENT".equals(notification.getType()) && notification.getRelatedId() != null) {
@@ -276,67 +264,114 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
     private void loadMockNotifications() {
         List<Notification> mockNotifications = new ArrayList<>();
         
-        // Notificação 1 - Promoção Restaurante
+        // Notificação 1 - Anúncio 2: Promoção de Verão (Belas Shopping)
         Notification n1 = new Notification();
         n1.setId("notif1");
-        n1.setTitle("🍕 Promoção Especial - Pizza Margherita");
-        n1.setMessage("Desfrute de 30% de desconto em todas as pizzas hoje! Válido apenas na Pizzaria Bella Napoli. Localização: Centro Comercial Colombo. Autor: Restaurante Bella Napoli");
+        n1.setTitle("🍕 Promoção de Verão");
+        n1.setMessage("Descontos em todas as lojas! Válido até o fim do mês. Localização: Belas Shopping. Autor: Carol Lima");
         n1.setType("ANNOUNCEMENT");
-        n1.setRelatedId("ann1");
+        n1.setRelatedId("2"); // ID do anúncio real
         n1.setRead(false);
         n1.setTimestamp(System.currentTimeMillis());
         mockNotifications.add(n1);
         
-        // Notificação 2 - Evento Academia
+        // Notificação 2 - Anúncio 3: Torneio de Futebol
         Notification n2 = new Notification();
         n2.setId("notif2");
-        n2.setTitle("💪 Aula Experimental de Yoga Grátis");
-        n2.setMessage("Participe da nossa aula experimental de yoga amanhã às 18h. Inscrições limitadas! Localização: Academia Fitness Plus, Avenida da República. Autor: Academia Fitness Plus");
+        n2.setTitle("💪 Torneio de Futebol");
+        n2.setMessage("Inscreva sua equipe no torneio comunitário. Amantes de desporto bem-vindos! Localização: Marginal de Luanda. Autor: Carol Lima");
         n2.setType("ANNOUNCEMENT");
-        n2.setRelatedId("ann2");
+        n2.setRelatedId("3"); // ID do anúncio real
         n2.setRead(false);
         n2.setTimestamp(System.currentTimeMillis() - 3600000); // 1 hora atrás
         mockNotifications.add(n2);
         
-        // Notificação 3 - Livraria
+        // Notificação 3 - Anúncio 4: Visita Guiada Histórica
         Notification n3 = new Notification();
         n3.setId("notif3");
-        n3.setTitle("📚 Lançamento de Livro com Sessão de Autógrafos");
-        n3.setMessage("Não perca o lançamento do novo livro 'Aventuras em Lisboa' com sessão de autógrafos no sábado às 15h. Localização: Livraria Bertrand, Chiado. Autor: Livraria Bertrand");
+        n3.setTitle("📚 Visita Guiada Histórica");
+        n3.setMessage("Conheça a história de Luanda através dos seus monumentos. Localização: Fortaleza de São Miguel. Autor: Alice Silva");
         n3.setType("ANNOUNCEMENT");
-        n3.setRelatedId("ann3");
+        n3.setRelatedId("4"); // ID do anúncio real
         n3.setRead(false);
         n3.setTimestamp(System.currentTimeMillis() - 7200000); // 2 horas atrás
         mockNotifications.add(n3);
         
-        // Notificação 4 - Café
+        // Notificação 4 - Anúncio 1: Workshop de Programação
         Notification n4 = new Notification();
         n4.setId("notif4");
-        n4.setTitle("☕ Happy Hour - Café e Bolo por 5€");
-        n4.setMessage("De segunda a sexta, das 15h às 17h, desfrute do nosso Happy Hour: café expresso + fatia de bolo por apenas 5€. Localização: Café Central, Rossio. Autor: Café Central");
+        n4.setTitle("☕ Workshop de Programação");
+        n4.setMessage("Venha aprender Java e Android! Inscrições abertas para estudantes. Localização: ISPTEC. Autor: Bob Santos");
         n4.setType("ANNOUNCEMENT");
-        n4.setRelatedId("ann4");
+        n4.setRelatedId("1"); // ID do anúncio real
         n4.setRead(false);
         n4.setTimestamp(System.currentTimeMillis() - 10800000); // 3 horas atrás
         mockNotifications.add(n4);
         
-        // Notificação 5 - Loja de Tecnologia
+        // Notificação 5 - Anúncio 6: Hackathon 2025
         Notification n5 = new Notification();
         n5.setId("notif5");
-        n5.setTitle("🎧 Saldos de Verão - Até 50% OFF");
-        n5.setMessage("Aproveite os saldos de verão com descontos até 50% em smartphones, tablets e acessórios. Localização: TechStore, Centro Comercial Vasco da Gama. Autor: TechStore Lisboa");
+        n5.setTitle("🎧 Hackathon 2025");
+        n5.setMessage("48 horas de código, inovação e prêmios! Interessados em tecnologia, participem! Localização: ISPTEC. Autor: Bob Santos");
         n5.setType("ANNOUNCEMENT");
-        n5.setRelatedId("ann5");
+        n5.setRelatedId("6"); // ID do anúncio real
         n5.setRead(false);
         n5.setTimestamp(System.currentTimeMillis() - 14400000); // 4 horas atrás
         mockNotifications.add(n5);
         
+        // Salva na lista atual
+        currentNotifications = mockNotifications;
+        
         // Atualiza o adapter
-        adapter.setNotifications(mockNotifications);
+        adapter.setNotifications(currentNotifications);
+        updateUI();
+    }
+    
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+        // Salva os IDs das notificações lidas
+        List<String> readIds = new ArrayList<>();
+        for (Notification notification : currentNotifications) {
+            if (notification.isRead()) {
+                readIds.add(notification.getId());
+            }
+        }
+        outState.putStringArrayList(KEY_READ_IDS, new ArrayList<>(readIds));
+        
+        Log.d(TAG, "Estado salvo: " + readIds.size() + " notificações lidas");
+    }
+    
+    private void restoreNotificationsState(Bundle savedInstanceState) {
+        // Carrega notificações mockadas primeiro
+        loadMockNotifications();
+        
+        // Restaura quais estavam lidas
+        ArrayList<String> readIds = savedInstanceState.getStringArrayList(KEY_READ_IDS);
+        if (readIds != null && !readIds.isEmpty()) {
+            for (Notification notification : currentNotifications) {
+                if (readIds.contains(notification.getId())) {
+                    notification.setRead(true);
+                }
+            }
+            
+            adapter.setNotifications(currentNotifications);
+            updateUI();
+            
+            Log.d(TAG, "Estado restaurado: " + readIds.size() + " notificações marcadas como lidas");
+        }
+    }
+    
+    private void updateUI() {
         updateSavedStates();
         
-        txtEmpty.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-        containerMarkAllRead.setVisibility(View.VISIBLE);
+        if (currentNotifications != null && !currentNotifications.isEmpty()) {
+            txtEmpty.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            txtEmpty.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
     }
 }

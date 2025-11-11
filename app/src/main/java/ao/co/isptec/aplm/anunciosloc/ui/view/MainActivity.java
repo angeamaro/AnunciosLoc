@@ -107,11 +107,9 @@ public class MainActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.nav_home) {
-                    // Home mostra HomeFragment (Bem-vindo + Anúncios Recentes)
                     fragment = new HomeFragment();
                     tag = "home";
                 } else if (itemId == R.id.nav_announcements) {
-                    // Anúncios mostra AnnouncementsFragment (Guardados/Todos)
                     fragment = new AnnouncementsFragment();
                     tag = "announcements";
                 } else if (itemId == R.id.nav_create) {
@@ -164,14 +162,6 @@ public class MainActivity extends AppCompatActivity {
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
-            // Em caso de erro, tenta recarregar o fragment de anúncios
-            try {
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragmentContainer, new AnnouncementsFragment(), "announcements");
-                transaction.commit();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         }
     }
     
@@ -187,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
     
     public void navigateToHome() {
-        loadFragment(new AnnouncementsFragment(), "home");
+        loadFragment(new HomeFragment(), "home");
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 

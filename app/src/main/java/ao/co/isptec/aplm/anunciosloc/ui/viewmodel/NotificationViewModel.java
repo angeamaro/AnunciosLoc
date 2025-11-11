@@ -24,7 +24,8 @@ public class NotificationViewModel extends ViewModel {
     
     public NotificationViewModel() {
         this.notificationRepository = NotificationRepository.getInstance();
-        loadNotifications();
+        // NÃO carrega automaticamente - o fragment gerencia suas próprias notificações mockadas
+        // Se quiser usar o Repository, chame loadNotifications() manualmente
     }
     
     // Getters para LiveData
@@ -96,25 +97,6 @@ public class NotificationViewModel extends ViewModel {
             boolean success = notificationRepository.markAsRead(notificationId);
             if (success) {
                 loadNotifications();
-            }
-        }).start();
-    }
-    
-    /**
-     * Marca todas como lidas
-     */
-    public void markAllAsRead() {
-        isLoading.setValue(true);
-        
-        new Thread(() -> {
-            try {
-                Thread.sleep(500);
-                notificationRepository.markAllAsRead();
-                loadNotifications();
-            } catch (InterruptedException e) {
-                errorMessage.postValue("Erro ao marcar notificações");
-            } finally {
-                isLoading.postValue(false);
             }
         }).start();
     }
