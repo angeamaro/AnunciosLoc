@@ -44,7 +44,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:maxLines="2" />
+                    android:maxLines="2"
+                    android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Conteúdo -->
@@ -62,7 +63,8 @@
                     android:inputType="textMultiLine"
                     android:minLines="4"
                     android:maxLines="8"
-                    android:gravity="top" />
+                    android:gravity="top"
+                    android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Localização -->
@@ -95,7 +97,8 @@
                         android:id="@+id/spinnerLocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="none" />
+                        android:inputType="none"
+                        android:textColor="@color/black" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
@@ -144,7 +147,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:focusable="false"
-                        android:clickable="true" />
+                        android:clickable="true"
+                        android:textColor="@color/black" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -162,7 +166,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:focusable="false"
-                        android:clickable="true" />
+                        android:clickable="true"
+                        android:textColor="@color/black" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -189,7 +194,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:focusable="false"
-                        android:clickable="true" />
+                        android:clickable="true"
+                        android:textColor="@color/black" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -207,7 +213,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:focusable="false"
-                        android:clickable="true" />
+                        android:clickable="true"
+                        android:textColor="@color/black" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -234,7 +241,8 @@
                     android:text="Centralizada (via Servidor)"
                     android:checked="true"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -252,7 +260,8 @@
                     android:layout_height="wrap_content"
                     android:text="Descentralizada (P2P WiFi Direct)"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -287,7 +296,8 @@
                     android:layout_height="wrap_content"
                     android:text="Todos"
                     android:checked="true"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/radioWhitelist"
@@ -295,7 +305,8 @@
                     android:layout_height="wrap_content"
                     android:text="Whitelist (Apenas usuários específicos)"
                     android:textSize="14sp"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/radioBlacklist"
@@ -303,7 +314,8 @@
                     android:layout_height="wrap_content"
                     android:text="Blacklist (Excluir usuários específicos)"
                     android:textSize="14sp"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black" />
             </RadioGroup>
 
             <!-- Botão Configurar Política -->

@@ -72,7 +72,7 @@ public class LocationViewModel extends ViewModel {
      * Carrega todas as localizações
      */
     public void loadLocations() {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {
@@ -91,7 +91,7 @@ public class LocationViewModel extends ViewModel {
      * Carrega localizações de um usuário específico
      */
     public void loadUserLocations(String userId) {
-        isLoading.setValue(true);
+        isLoading.postValue(true);
         
         new Thread(() -> {
             try {
@@ -110,8 +110,8 @@ public class LocationViewModel extends ViewModel {
      * Cria nova localização
      */
     public void createLocation(Location location) {
-        isLoading.setValue(true);
-        errorMessage.setValue(null);
+        isLoading.postValue(true);
+        errorMessage.postValue(null);
         
         new Thread(() -> {
             try {
@@ -141,8 +141,8 @@ public class LocationViewModel extends ViewModel {
      * Atualiza localização
      */
     public void updateLocation(Location location) {
-        isLoading.setValue(true);
-        errorMessage.setValue(null);
+        isLoading.postValue(true);
+        errorMessage.postValue(null);
         
         new Thread(() -> {
             try {
@@ -172,8 +172,8 @@ public class LocationViewModel extends ViewModel {
      * Deleta localização
      */
     public void deleteLocation(String locationId) {
-        isLoading.setValue(true);
-        errorMessage.setValue(null);
+        isLoading.postValue(true);
+        errorMessage.postValue(null);
         
         new Thread(() -> {
             try {
