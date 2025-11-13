@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginTop="16dp"
+    android:backgroundTint="@android:color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+
+        >
+
+
+        <!-- Ícone Grande de Wi-Fi --><ImageView
+        android:id="@+id/icon_wifi_card"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_circle_purple"
+        android:padding="16dp"
+        android:src="@drawable/ic_wifi_large"
+        app:tint="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+        <!-- Título do Local --><TextView
+        android:id="@+id/text_local_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Centro Comercial Colombo"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/icon_edit"
+        app:layout_constraintStart_toEndOf="@+id/icon_wifi_card"
+        app:layout_constraintTop_toTopOf="@+id/icon_wifi_card" />
+        <!-- Chip "Meu GPS" -->
+        <TextView
+            android:id="@+id/chip_gps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="-25dp"
+            android:background="@drawable/bg_chip_gpss"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="GPS"
+            android:textColor="@color/blue_700"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/text_ssid"
+            app:layout_constraintTop_toBottomOf="@+id/text_ssid" />
+
+        <!-- Chip "Wi-Fi" --><TextView
+        android:id="@+id/chip_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_chip_wifi"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:text="Wi-Fi"
+        android:textColor="@color/purple_600"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/text_local_title"
+        app:layout_constraintTop_toBottomOf="@+id/text_local_title" />
+
+
+
+        <!-- Chip "Meu Local" --><TextView
+        android:id="@+id/chip_meu_local"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_chip_meu_local"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:text="Meu Local"
+        android:textColor="@color/green_700"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/chip_wifi"
+        app:layout_constraintTop_toBottomOf="@+id/text_local_title" />
+
+        <!-- Nome da Rede (SSID) -->
+        <TextView
+        android:id="@+id/text_ssid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="CC_Colombo_WiFi"
+        android:textColor="@color/gray_700"
+        android:textSize="14sp"
+        android:layout_marginLeft="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/icon_wifi_card"
+        app:layout_constraintTop_toBottomOf="@+id/chip_wifi" />
+
+
+
+        <!-- Data de Criação --><TextView
+        android:id="@+id/text_created_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="4dp"
+        android:text="Criado em 10/02/2025"
+        android:textColor="@color/gray_500"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/icon_wifi_card"
+        app:layout_constraintTop_toBottomOf="@+id/text_ssid" />
+
+        <!-- Ícone de Editar --><ImageView
+        android:id="@+id/icon_edit"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_edit"
+        app:tint="@color/gray_500"
+        app:layout_constraintEnd_toStartOf="@+id/icon_delete"
+        app:layout_constraintTop_toTopOf="@+id/text_local_title"
+        tools:ignore="ContentDescription" />
+
+        <!-- Ícone de Eliminar --><ImageView
+        android:id="@+id/icon_delete"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_delete"
+        app:tint="@color/red_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_local_title"
+        tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

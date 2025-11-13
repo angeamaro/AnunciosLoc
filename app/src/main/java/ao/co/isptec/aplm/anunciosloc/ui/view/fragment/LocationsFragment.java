@@ -102,7 +102,7 @@ public class LocationsFragment extends Fragment implements OnMapReadyCallback {
         googleMap.setOnMarkerClickListener(marker -> {
             if (marker.getTag() instanceof Location) {
                 Location location = (Location) marker.getTag();
-                openLocationDetails(location);
+                openEditLocation(location);
             }
             return true;
         });
@@ -162,12 +162,6 @@ public class LocationsFragment extends Fragment implements OnMapReadyCallback {
                 // Se falhar, mantém a posição atual
             }
         }
-    }
-    
-    private void openLocationDetails(Location location) {
-        Intent intent = new Intent(getContext(), ao.co.isptec.aplm.anunciosloc.ui.view.LocationDetailsActivity.class);
-        intent.putExtra("LOCATION_ID", location.getId());
-        startActivity(intent);
     }
     
     private void openEditLocation(Location location) {
