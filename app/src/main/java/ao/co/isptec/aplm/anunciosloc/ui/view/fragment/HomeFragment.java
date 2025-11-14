@@ -26,7 +26,6 @@ import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.ui.adapter.AnnouncementAdapter;
 import ao.co.isptec.aplm.anunciosloc.data.model.Announcement;
 import ao.co.isptec.aplm.anunciosloc.data.model.User;
-import ao.co.isptec.aplm.anunciosloc.data.repository.UserRepository;
 import ao.co.isptec.aplm.anunciosloc.ui.view.AnnouncementDetailActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.view.MenuOptionsActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.AnnouncementViewModel;
@@ -46,7 +45,6 @@ public class HomeFragment extends Fragment {
 
     private AnnouncementViewModel viewModel;
     private AnnouncementAdapter adapter;
-    private UserRepository userRepository;
 
     @Nullable
     @Override
@@ -75,29 +73,13 @@ public class HomeFragment extends Fragment {
     private void loadUserName() {
         if (getContext() == null || txtUserName == null) return;
 
-        userRepository = UserRepository.getInstance();
-        User currentUser = userRepository.getCurrentUser();
+        // A fonte da verdade para a sessão é o PreferencesHelper.
+        User currentUser = PreferencesHelper.getCurrentUser(getContext());
 
-        if (currentUser != null) {
-            String userName = currentUser.getName();
-            if (userName != null && !userName.isEmpty()) {
-                txtUserName.setText(userName);
-            } else {
-                txtUserName.setText("Usuário");
-            }
+        if (currentUser != null && currentUser.getUsername() != null && !currentUser.getUsername().isEmpty()) {
+            txtUserName.setText(currentUser.getUsername());
         } else {
-            // Tenta obter do PreferencesHelper
-            try {
-                PreferencesHelper preferencesHelper = new PreferencesHelper(getContext());
-                String userName = preferencesHelper.getUserName();
-                if (userName != null && !userName.isEmpty()) {
-                    txtUserName.setText(userName);
-                } else {
-                    txtUserName.setText("Usuário");
-                }
-            } catch (Exception e) {
-                txtUserName.setText("Usuário");
-            }
+            txtUserName.setText("Usuário"); // Fallback
         }
     }
 

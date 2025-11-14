@@ -25,6 +25,7 @@ import com.google.android.material.button.MaterialButton;
 
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.data.model.Location;
+import ao.co.isptec.aplm.anunciosloc.data.model.User;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.LocationViewModel;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
 
@@ -45,7 +46,6 @@ public class LocationDetailsActivity extends AppCompatActivity implements OnMapR
     
     // Data
     private LocationViewModel locationViewModel;
-    private PreferencesHelper preferencesHelper;
     private Location location;
     private String locationId;
     private String currentUserId;
@@ -55,9 +55,15 @@ public class LocationDetailsActivity extends AppCompatActivity implements OnMapR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_details);
         
-        // Inicializa PreferencesHelper
-        preferencesHelper = new PreferencesHelper(this);
-        currentUserId = preferencesHelper.getUserId();
+        // CORRIGIDO: Obtém o usuário atual através do método estático
+        User currentUser = PreferencesHelper.getCurrentUser(this);
+        if (currentUser != null) {
+            currentUserId = String.valueOf(currentUser.getId());
+        } else {
+            Toast.makeText(this, "Erro de sessão. Por favor, faça login novamente.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         
         // Obtém ID da localização
         locationId = getIntent().getStringExtra("LOCATION_ID");

@@ -8,7 +8,7 @@ public class Location {
     private String name;
     private double latitude;
     private double longitude;
-    private int radiusInMeters;
+    private double radiusInMeters; // ALTERADO PARA DOUBLE
     private String ssid; // SSID do WiFi/Beacon BLE (opcional)
     private String description;
     private String createdBy; // ID do usuário que criou
@@ -20,7 +20,7 @@ public class Location {
         this.isActive = true;
     }
     
-    public Location(String id, String name, double latitude, double longitude, int radiusInMeters) {
+    public Location(String id, String name, double latitude, double longitude, double radiusInMeters) { // ALTERADO PARA DOUBLE
         this();
         this.id = id;
         this.name = name;
@@ -62,11 +62,11 @@ public class Location {
         this.longitude = longitude;
     }
     
-    public int getRadiusInMeters() {
+    public double getRadiusInMeters() { // ALTERADO PARA DOUBLE
         return radiusInMeters;
     }
     
-    public void setRadiusInMeters(int radiusInMeters) {
+    public void setRadiusInMeters(double radiusInMeters) { // ALTERADO PARA DOUBLE
         this.radiusInMeters = radiusInMeters;
     }
     

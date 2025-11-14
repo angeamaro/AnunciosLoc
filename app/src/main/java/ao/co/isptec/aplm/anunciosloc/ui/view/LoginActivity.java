@@ -2,23 +2,20 @@ package ao.co.isptec.aplm.anunciosloc.ui.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.View; // IMPORT ADICIONADO
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import ao.co.isptec.aplm.anunciosloc.ui.view.MainActivity;
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.data.model.User;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.AuthViewModel;
 import ao.co.isptec.aplm.anunciosloc.utils.FeedbackUtils;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
-import ao.co.isptec.aplm.anunciosloc.utils.ValidationUtils;
 
 /**
  * Tela de Login
@@ -31,14 +28,12 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     
     private AuthViewModel authViewModel;
-    private PreferencesHelper preferencesHelper;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         
-        // Esconde ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -56,12 +51,12 @@ public class LoginActivity extends AppCompatActivity {
         txtRegister = findViewById(R.id.txtRegister);
         txtForgotPassword = findViewById(R.id.txtForgotPassword);
         progressBar = findViewById(R.id.progressBar);
-        
-        preferencesHelper = new PreferencesHelper(this);
     }
     
     private void initializeViewModel() {
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        authViewModel = new ViewModelProvider(this, 
+            ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()))
+            .get(AuthViewModel.class);
     }
     
     private void setupListeners() {
@@ -77,7 +72,6 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void observeViewModel() {
-        // Observa estado de carregamento
         authViewModel.getIsLoading().observe(this, isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             btnLogin.setEnabled(!isLoading);
@@ -85,31 +79,19 @@ public class LoginActivity extends AppCompatActivity {
             editPassword.setEnabled(!isLoading);
         });
         
-        // Observa sucesso de login
         authViewModel.getLoginSuccess().observe(this, success -> {
             if (success != null && success) {
-                User user = authViewModel.getCurrentUser();
-                if (user != null) {
-                    // Salva sessão
-                    preferencesHelper.saveUserSession(
-                        user.getId(),
-                        user.getName(),  
-                        user.getEmail(),
-                        "mock_token_" + user.getId()
-                    );
-                    
-                    FeedbackUtils.showSuccess(findViewById(android.R.id.content), getString(R.string.success_login));
-                    
-                    // Navega para MainActivity
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                }
+                // A sessão agora é salva dentro do AuthViewModel.
+                // A Activity apenas reage ao sucesso.
+                FeedbackUtils.showSuccess(findViewById(android.R.id.content), getString(R.string.success_login));
+                
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
             }
         });
         
-        // Observa mensagens de erro
         authViewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
                 FeedbackUtils.showError(findViewById(android.R.id.content), error);
@@ -118,28 +100,21 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void attemptLogin() {
-        // Limpa erros anteriores
         editUsername.setError(null);
         editPassword.setError(null);
         
         String username = editUsername.getText().toString().trim();
         String password = editPassword.getText().toString();
         
-        // Validações
-        boolean isValid = true;
-        
-        if (!ValidationUtils.isNotEmpty(username)) {
-            editUsername.setError(getString(R.string.error_empty_field));
-            isValid = false;
+        if (username.isEmpty()) {
+            editUsername.setError("Campo obrigatório");
+            return;
+        }
+        if (password.isEmpty()) {
+            editPassword.setError("Campo obrigatório");
+            return;
         }
         
-        if (!ValidationUtils.isNotEmpty(password)) {
-            editPassword.setError(getString(R.string.error_empty_field));
-            isValid = false;
-        }
-        
-        if (isValid) {
-            authViewModel.login(username, password);
-        }
+        authViewModel.login(username, password);
     }
 }

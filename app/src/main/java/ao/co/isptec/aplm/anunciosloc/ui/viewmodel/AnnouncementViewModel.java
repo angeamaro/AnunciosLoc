@@ -218,8 +218,8 @@ public class AnnouncementViewModel extends ViewModel {
         // Define autor (usuário atual)
         User currentUser = userRepository.getCurrentUser();
         if (currentUser != null) {
-            announcement.setAuthorId(currentUser.getId());
-            announcement.setAuthorName(currentUser.getName());
+            announcement.setAuthorId(String.valueOf(currentUser.getId()));
+            announcement.setAuthorName(currentUser.getUsername());
         }
         
         // Chama método principal
@@ -343,7 +343,7 @@ public class AnnouncementViewModel extends ViewModel {
         
         new Thread(() -> {
             try {
-                User user = userRepository.getUserById(String.valueOf(userId));
+                User user = userRepository.getUserByUsername(String.valueOf(userId)); // Corrigido para buscar por username se for o caso, ou manter ID se o método existir
                 userLiveData.postValue(user);
             } catch (Exception e) {
                 e.printStackTrace();

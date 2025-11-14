@@ -124,7 +124,11 @@ public class RegisterActivity extends AppCompatActivity {
         }
         
         if (isValid) {
-            authViewModel.register(username, username + "@example.com", password, username);
+            authViewModel.register(username, password);
+
+
+            // Salva as credenciais no SharedPreferences
+            //PreferencesHelper.saveCredentials(this, " ", password, username);
         }
     }
     

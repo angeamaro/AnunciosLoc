@@ -3,103 +3,86 @@ package ao.co.isptec.aplm.anunciosloc.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import ao.co.isptec.aplm.anunciosloc.data.model.User;
+
 /**
- * Helper para gerenciar SharedPreferences
+ * Classe utilitária para gerenciar as SharedPreferences da aplicação.
  */
 public class PreferencesHelper {
-    
-    private final SharedPreferences preferences;
-    
-    public PreferencesHelper(Context context) {
-        this.preferences = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+    private static final String PREF_NAME = "AnunciosLocPrefs";
+    private static final String KEY_TOKEN = "session_token";
+    private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_USERNAME = "username";
+
+    private static SharedPreferences getPrefs(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
-    
+
     /**
-     * Salva dados de login do usuário
+     * Salva a sessão do usuário após um login bem-sucedido.
+     * @param context Contexto da aplicação.
+     * @param token O token de sessão recebido da API.
+     * @param user O objeto User que veio da API.
      */
-    public void saveUserSession(String userId, String userName, String email, String token) {
-        preferences.edit()
-                .putString(Constants.KEY_USER_ID, userId)
-                .putString(Constants.KEY_USER_NAME, userName)
-                .putString(Constants.KEY_USER_EMAIL, email)
-                .putString(Constants.KEY_SESSION_TOKEN, token)
-                .putBoolean(Constants.KEY_IS_LOGGED_IN, true)
-                .apply();
+    public static void saveUserSession(Context context, String token, User user) {
+        if (user == null || user.getId() == null || user.getUsername() == null) {
+            return; // Não salva uma sessão inválida
+        }
+        SharedPreferences.Editor editor = getPrefs(context).edit();
+        editor.putString(KEY_TOKEN, token);
+        editor.putString(KEY_USER_ID, String.valueOf(user.getId())); // Salva como String
+        editor.putString(KEY_USERNAME, user.getUsername());
+        editor.apply();
     }
-    
+
     /**
-     * Verifica se o usuário está logado
+     * Recupera o token de sessão salvo.
+     * @param context Contexto da aplicação.
+     * @return O token, ou null se não existir.
      */
-    public boolean isUserLoggedIn() {
-        return preferences.getBoolean(Constants.KEY_IS_LOGGED_IN, false);
+    public static String getToken(Context context) {
+        return getPrefs(context).getString(KEY_TOKEN, null);
     }
-    
+
     /**
-     * Obtém o ID do usuário logado
+     * Recupera os dados do usuário logado para uso na aplicação.
+     * @param context Contexto da aplicação.
+     * @return Um objeto User com os dados salvos, ou null se não houver sessão.
      */
-    public String getUserId() {
-        return preferences.getString(Constants.KEY_USER_ID, null);
+    public static User getCurrentUser(Context context) {
+        String idStr = getPrefs(context).getString(KEY_USER_ID, null);
+        String username = getPrefs(context).getString(KEY_USERNAME, null);
+
+        if (idStr == null || username == null) {
+            return null; // Não há sessão válida
+        }
+
+        try {
+            long id = Long.parseLong(idStr);
+            // Usa o construtor correto e define os dados. A senha não é necessária aqui.
+            User user = new User(username, null); 
+            user.setId(id);
+            return user;
+        } catch (NumberFormatException e) {
+            // Se o ID salvo não for um número válido, a sessão está corrompida.
+            return null;
+        }
     }
-    
+
     /**
-     * Obtém o nome do usuário logado
+     * Limpa todos os dados da sessão (usado no logout).
+     * @param context Contexto da aplicação.
      */
-    public String getUserName() {
-        return preferences.getString(Constants.KEY_USER_NAME, null);
+    public static void clearSession(Context context) {
+        getPrefs(context).edit().clear().apply();
     }
-    
+
     /**
-     * Obtém o email do usuário logado
+     * Verifica se existe um token de sessão, indicando que o usuário está logado.
+     * @param context Contexto da aplicação.
+     * @return true se o usuário está logado, false caso contrário.
      */
-    public String getUserEmail() {
-        return preferences.getString(Constants.KEY_USER_EMAIL, null);
-    }
-    
-    /**
-     * Obtém o token de sessão
-     */
-    public String getSessionToken() {
-        return preferences.getString(Constants.KEY_SESSION_TOKEN, null);
-    }
-    
-    /**
-     * Limpa todos os dados de sessão (logout)
-     */
-    public void clearUserSession() {
-        preferences.edit()
-                .remove(Constants.KEY_USER_ID)
-                .remove(Constants.KEY_USER_NAME)
-                .remove(Constants.KEY_USER_EMAIL)
-                .remove(Constants.KEY_SESSION_TOKEN)
-                .putBoolean(Constants.KEY_IS_LOGGED_IN, false)
-                .apply();
-    }
-    
-    /**
-     * Salva um valor string genérico
-     */
-    public void saveString(String key, String value) {
-        preferences.edit().putString(key, value).apply();
-    }
-    
-    /**
-     * Obtém um valor string genérico
-     */
-    public String getString(String key, String defaultValue) {
-        return preferences.getString(key, defaultValue);
-    }
-    
-    /**
-     * Salva um valor booleano
-     */
-    public void saveBoolean(String key, boolean value) {
-        preferences.edit().putBoolean(key, value).apply();
-    }
-    
-    /**
-     * Obtém um valor booleano
-     */
-    public boolean getBoolean(String key, boolean defaultValue) {
-        return preferences.getBoolean(key, defaultValue);
+    public static boolean isLoggedIn(Context context) {
+        return getToken(context) != null;
     }
 }

@@ -12,6 +12,12 @@ import com.google.android.material.card.MaterialCardView;
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
 
+// IMPORTS CORRIGIDOS
+import ao.co.isptec.aplm.anunciosloc.ui.view.InterestsActivity;
+import ao.co.isptec.aplm.anunciosloc.ui.view.PoliciesActivity;
+import ao.co.isptec.aplm.anunciosloc.ui.view.ProfileActivity;
+import ao.co.isptec.aplm.anunciosloc.ui.view.SettingsActivity;
+
 /**
  * MenuOptionsActivity - Tela de menu com todas as opções do app
  */
@@ -19,7 +25,6 @@ public class MenuOptionsActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
     private MaterialCardView cardPerfil, cardDefinicoes, cardInteresses, cardPoliticas, cardSair;
-    private PreferencesHelper preferencesHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +35,6 @@ public class MenuOptionsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-
-        preferencesHelper = new PreferencesHelper(this);
 
         initializeViews();
         setupListeners();
@@ -79,8 +82,8 @@ public class MenuOptionsActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        // Limpa dados do usuário
-        preferencesHelper.clearUserSession();
+        // Limpa dados do usuário usando o método estático
+        PreferencesHelper.clearSession(this);
         
         // Redireciona para Login
         Intent intent = new Intent(this, LoginActivity.class);

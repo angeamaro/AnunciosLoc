@@ -1,175 +1,128 @@
 package ao.co.isptec.aplm.anunciosloc.ui.viewmodel;
 
+import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import ao.co.isptec.aplm.anunciosloc.data.model.User;
-import ao.co.isptec.aplm.anunciosloc.data.repository.UserRepository;
+import ao.co.isptec.aplm.anunciosloc.data.model.LoginRequest;
+import ao.co.isptec.aplm.anunciosloc.data.model.LoginResponse;
+import ao.co.isptec.aplm.anunciosloc.data.model.RegisterRequest;
+import ao.co.isptec.aplm.anunciosloc.data.network.RetrofitClient;
 
 /**
- * ViewModel para gerenciar autenticação (Login, Registro, Recuperação de senha)
+ * ViewModel para gerenciar autenticação, focado na API.
  */
-public class AuthViewModel extends ViewModel {
-    
-    private final UserRepository userRepository;
+public class AuthViewModel extends AndroidViewModel {
     
     private final MutableLiveData<User> authenticatedUser = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> loginSuccess = new MutableLiveData<>();
     private final MutableLiveData<Boolean> registerSuccess = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> passwordRecoverySuccess = new MutableLiveData<>();
     
-    public AuthViewModel() {
-        this.userRepository = UserRepository.getInstance();
+    public AuthViewModel(@NonNull Application application) {
+        super(application);
     }
     
     // Getters para LiveData
-    public LiveData<User> getAuthenticatedUser() {
-        return authenticatedUser;
-    }
-    
-    public LiveData<String> getErrorMessage() {
-        return errorMessage;
-    }
-    
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
-    }
-    
-    public LiveData<Boolean> getLoginSuccess() {
-        return loginSuccess;
-    }
-    
-    public LiveData<Boolean> getRegisterSuccess() {
-        return registerSuccess;
-    }
-    
-    public LiveData<Boolean> getPasswordRecoverySuccess() {
-        return passwordRecoverySuccess;
-    }
+    public LiveData<User> getAuthenticatedUser() { return authenticatedUser; }
+    public LiveData<String> getErrorMessage() { return errorMessage; }
+    public LiveData<Boolean> getIsLoading() { return isLoading; }
+    public LiveData<Boolean> getLoginSuccess() { return loginSuccess; }
+    public LiveData<Boolean> getRegisterSuccess() { return registerSuccess; }
     
     /**
-     * Realiza login
+     * Realiza login através da API.
      */
-    public void login(String email, String password) {
+    public void login(String username, String password) {
         isLoading.setValue(true);
         errorMessage.setValue(null);
-        
-        // Simula delay de rede
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                
-                User user = userRepository.login(email, password);
-                
-                if (user != null) {
+        loginSuccess.setValue(false);
+
+        LoginRequest request = new LoginRequest(username, password);
+        RetrofitClient.getApiService().login(request).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                isLoading.postValue(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse resp = response.body();
+                    User user = resp.getUser();
+
+                    // SALVA A SESSÃO COM O TOKEN REAL
+                    PreferencesHelper.saveUserSession(
+                            getApplication(),
+                            resp.getSessionToken(),
+                            user 
+                    );
+
                     authenticatedUser.postValue(user);
                     loginSuccess.postValue(true);
                 } else {
-                    errorMessage.postValue("Email ou senha inválidos");
-                    loginSuccess.postValue(false);
+                    errorMessage.postValue("Usuário ou senha inválidos (código: " + response.code() + ")");
                 }
-            } catch (InterruptedException e) {
-                errorMessage.postValue("Erro ao fazer login");
-                loginSuccess.postValue(false);
-            } finally {
-                isLoading.postValue(false);
             }
-        }).start();
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                isLoading.postValue(false);
+                errorMessage.postValue("Erro de conexão: " + t.getMessage());
+            }
+        });
     }
     
     /**
-     * Registra novo usuário
+     * Registra novo usuário através da API.
      */
-    public void register(String username, String email, String password, String name) {
+    public void register(String username, String password) {
         isLoading.setValue(true);
         errorMessage.setValue(null);
-        
-        // Simula delay de rede
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                
-                if (userRepository.emailExists(email)) {
-                    errorMessage.postValue("Este email já está registrado");
+        registerSuccess.setValue(false);
+
+        RegisterRequest request = new RegisterRequest(username, password);
+
+        RetrofitClient.getApiService().register(request).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                isLoading.postValue(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    registerSuccess.postValue(true);
+                } else {
+                    // MOSTRA O CÓDIGO DE ERRO PARA DEPURAR
+                    errorMessage.postValue("Falha no registo (código: " + response.code() + ")");
                     registerSuccess.postValue(false);
-                } else {
-                    User user = userRepository.register(username, email, password, name);
-                    if (user != null) {
-                        authenticatedUser.postValue(user);
-                        registerSuccess.postValue(true);
-                    } else {
-                        errorMessage.postValue("Erro ao registrar usuário");
-                        registerSuccess.postValue(false);
-                    }
                 }
-            } catch (InterruptedException e) {
-                errorMessage.postValue("Erro ao registrar");
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                isLoading.postValue(false);
+                errorMessage.postValue("Falha na conexão: " + t.getMessage());
                 registerSuccess.postValue(false);
-            } finally {
-                isLoading.postValue(false);
             }
-        }).start();
+        });
     }
     
     /**
-     * Recupera senha
-     */
-    public void recoverPassword(String email) {
-        isLoading.setValue(true);
-        errorMessage.setValue(null);
-        
-        // Simula delay de rede
-        new Thread(() -> {
-            try {
-                Thread.sleep(1500);
-                
-                boolean success = userRepository.recoverPassword(email);
-                
-                if (success) {
-                    passwordRecoverySuccess.postValue(true);
-                } else {
-                    errorMessage.postValue("Email não encontrado");
-                    passwordRecoverySuccess.postValue(false);
-                }
-            } catch (InterruptedException e) {
-                errorMessage.postValue("Erro ao recuperar senha");
-                passwordRecoverySuccess.postValue(false);
-            } finally {
-                isLoading.postValue(false);
-            }
-        }).start();
-    }
-    
-    /**
-     * Faz logout
+     * Faz logout.
      */
     public void logout() {
-        userRepository.logout();
         authenticatedUser.setValue(null);
+        loginSuccess.setValue(false); // Garante que o estado de sucesso seja limpo
+        PreferencesHelper.clearSession(getApplication());
     }
     
     /**
-     * Verifica se há usuário logado
-     */
-    public boolean isUserLoggedIn() {
-        return userRepository.getCurrentUser() != null;
-    }
-    
-    /**
-     * Obtém usuário atual
+     * Obtém usuário atual.
      */
     public User getCurrentUser() {
-        return userRepository.getCurrentUser();
-    }
-    
-    /**
-     * Define usuário atual (para sessão salva)
-     */
-    public void setCurrentUser(User user) {
-        userRepository.setCurrentUser(user);
-        authenticatedUser.setValue(user);
+        return authenticatedUser.getValue();
     }
 }

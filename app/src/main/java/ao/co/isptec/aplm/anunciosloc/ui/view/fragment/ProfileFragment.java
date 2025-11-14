@@ -40,7 +40,7 @@ import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
 public class ProfileFragment extends Fragment {
     
     private ImageView imgProfile;
-    private TextView txtName, txtEmail, txtUsername, txtPhoneNumber;
+    private TextView txtUsername;
     private RecyclerView recyclerAttributes;
     private AttributeAdapter adapter;
     private FloatingActionButton fabAddAttribute;
@@ -49,281 +49,169 @@ public class ProfileFragment extends Fragment {
     private LinearLayout layoutProfile;
     
     private ProfileViewModel viewModel;
-    private UserRepository userRepository;
+    private UserRepository userRepository; // Mantido para carregar dados iniciais, se necessário
     
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        try {
-            View view = inflater.inflate(R.layout.fragment_profile, container, false);
-            
-            initializeViews(view);
-            initializeViewModel();
-            setupRecyclerView();
-            setupListeners();
-            observeViewModel();
-            loadUserData();
-            
-            return view;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Retorna uma view vazia em caso de erro
-            return new View(getContext());
-        }
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        
+        initializeViews(view);
+        initializeViewModel();
+        setupRecyclerView();
+        setupListeners();
+        observeViewModel();
+        loadUserData();
+        
+        return view;
     }
     
     private void initializeViews(View view) {
-        try {
-            imgProfile = view.findViewById(R.id.imgProfile);
-            txtName = view.findViewById(R.id.txtName);
-            txtEmail = view.findViewById(R.id.txtEmail);
-            txtUsername = view.findViewById(R.id.txtUsername);
-            txtPhoneNumber = view.findViewById(R.id.txtPhoneNumber);
-            recyclerAttributes = view.findViewById(R.id.recyclerAttributes);
-            fabAddAttribute = view.findViewById(R.id.fabAddAttribute);
-            btnLogout = view.findViewById(R.id.btnLogout);
-            progressBar = view.findViewById(R.id.progressBar);
-            layoutProfile = view.findViewById(R.id.layoutProfile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        imgProfile = view.findViewById(R.id.imgProfile);
+        txtUsername = view.findViewById(R.id.txtUsername);
+        recyclerAttributes = view.findViewById(R.id.recyclerAttributes);
+        fabAddAttribute = view.findViewById(R.id.fabAddAttribute);
+        btnLogout = view.findViewById(R.id.btnLogout);
+        progressBar = view.findViewById(R.id.progressBar);
+        layoutProfile = view.findViewById(R.id.layoutProfile);
     }
     
     private void initializeViewModel() {
-        try {
-            viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-            userRepository = UserRepository.getInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+        userRepository = UserRepository.getInstance();
     }
     
     private void setupRecyclerView() {
-        try {
-            if (recyclerAttributes == null) return;
-            
-            adapter = new AttributeAdapter(new ArrayList<>());
-            adapter.setOnAttributeDeleteListener((key, value) -> {
-                try {
-                    if (viewModel != null) {
-                        viewModel.removeProfileAttribute(key);
-                        if (getContext() != null) {
-                            Toast.makeText(getContext(), "Atributo removido", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (recyclerAttributes == null) return;
+        
+        adapter = new AttributeAdapter(new ArrayList<>());
+        adapter.setOnAttributeDeleteListener((key, value) -> {
+            if (viewModel != null) {
+                viewModel.removeProfileAttribute(key);
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Atributo removido", Toast.LENGTH_SHORT).show();
                 }
-            });
-            
-            recyclerAttributes.setLayoutManager(new LinearLayoutManager(getContext()));
-            recyclerAttributes.setAdapter(adapter);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            }
+        });
+        
+        recyclerAttributes.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerAttributes.setAdapter(adapter);
     }
     
     private void setupListeners() {
-        try {
-            if (fabAddAttribute != null) {
-                fabAddAttribute.setOnClickListener(v -> showAddAttributeDialog());
-            }
-            
-            if (btnLogout != null) {
-                btnLogout.setOnClickListener(v -> {
-                    try {
-                        if (getContext() != null) {
-                            new AlertDialog.Builder(getContext())
-                                .setTitle("Sair")
-                                .setMessage("Tem certeza que deseja sair da sua conta?")
-                                .setPositiveButton("Sim", (dialog, which) -> logout())
-                                .setNegativeButton("Cancelar", null)
-                                .show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (fabAddAttribute != null) {
+            fabAddAttribute.setOnClickListener(v -> showAddAttributeDialog());
+        }
+        
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> {
+                if (getContext() != null) {
+                    new AlertDialog.Builder(getContext())
+                        .setTitle("Sair")
+                        .setMessage("Tem certeza que deseja sair da sua conta?")
+                        .setPositiveButton("Sim", (dialog, which) -> logout())
+                        .setNegativeButton("Cancelar", null)
+                        .show();
+                }
+            });
         }
     }
     
     private void observeViewModel() {
-        try {
-            if (viewModel == null) return;
-            
-            // Observa usuário atualizado
-            viewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-                try {
-                    if (user != null) {
-                        displayUserData(user);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            
-            // Observa estado de carregamento
-            viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-                try {
-                    if (progressBar != null && layoutProfile != null) {
-                        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-                        layoutProfile.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            
-            // Observa mensagens de erro
-            viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-                try {
-                    if (error != null && !error.isEmpty() && getContext() != null) {
-                        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            
-            // Observa sucesso de atualização
-            viewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
-                try {
-                    if (success != null && success && getContext() != null) {
-                        Toast.makeText(getContext(), "Perfil atualizado", Toast.LENGTH_SHORT).show();
-                        loadUserData();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (viewModel == null) return;
+        
+        viewModel.getUser().observe(getViewLifecycleOwner(), this::displayUserData);
+        
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (progressBar != null && layoutProfile != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                layoutProfile.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+            }
+        });
+        
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty() && getContext() != null) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+            }
+        });
+        
+        viewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
+            if (success != null && success && getContext() != null) {
+                Toast.makeText(getContext(), "Perfil atualizado", Toast.LENGTH_SHORT).show();
+                loadUserData();
+            }
+        });
     }
     
     private void loadUserData() {
-        try {
-            if (userRepository == null) return;
-            
-            User currentUser = userRepository.getCurrentUser();
-            if (currentUser != null) {
-                displayUserData(currentUser);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        // A fonte da verdade para o usuário logado é o PreferencesHelper
+        User currentUser = PreferencesHelper.getCurrentUser(getContext());
+        if (currentUser != null) {
+            displayUserData(currentUser);
         }
     }
     
     private void displayUserData(User user) {
-        try {
-            if (user == null) return;
-            
-            if (txtName != null) {
-                txtName.setText(user.getName());
-            }
-            if (txtEmail != null) {
-                txtEmail.setText(user.getEmail());
-            }
-            if (txtUsername != null) {
-                txtUsername.setText("@" + user.getUsername());
-            }
-            
-            if (txtPhoneNumber != null) {
-                if (user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty()) {
-                    txtPhoneNumber.setText(user.getPhoneNumber());
-                    txtPhoneNumber.setVisibility(View.VISIBLE);
-                } else {
-                    txtPhoneNumber.setVisibility(View.GONE);
-                }
-            }
-            
-            // Atualiza lista de atributos
-            if (adapter != null) {
-                Map<String, String> attributes = user.getProfileAttributes();
-                adapter.updateAttributes(attributes);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (user == null) return;
+        
+        if (txtUsername != null) {
+            txtUsername.setText("@" + user.getUsername());
+        }
+        
+        // Os campos de nome, email e telefone foram removidos pois não existem no novo modelo User
+
+        if (adapter != null) {
+            Map<String, String> attributes = user.getProfileAttributes();
+            adapter.updateAttributes(attributes);
         }
     }
     
     private void showAddAttributeDialog() {
-        try {
-            if (getContext() == null) return;
-            
-            View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_add_attribute, null);
-            EditText editKey = dialogView.findViewById(R.id.editKey);
-            EditText editValue = dialogView.findViewById(R.id.editValue);
-            
-            new AlertDialog.Builder(getContext())
-                .setTitle("Adicionar Atributo")
-                .setView(dialogView)
-                .setPositiveButton("Adicionar", (dialog, which) -> {
-                    try {
-                        if (editKey == null || editValue == null) return;
-                        
-                        String key = editKey.getText().toString().trim();
-                        String value = editValue.getText().toString().trim();
-                        
-                        if (key.isEmpty() || value.isEmpty()) {
-                            if (getContext() != null) {
-                                Toast.makeText(getContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-                            }
-                            return;
-                        }
-                        
-                        if (viewModel != null) {
-                            viewModel.addProfileAttribute(key, value);
-                            if (getContext() != null) {
-                                Toast.makeText(getContext(), "Atributo adicionado", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        if (getContext() != null) {
-                            Toast.makeText(getContext(), "Erro ao adicionar atributo", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (getContext() != null) {
-                Toast.makeText(getContext(), "Erro ao abrir diálogo", Toast.LENGTH_SHORT).show();
-            }
-        }
+        if (getContext() == null) return;
+        
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_add_attribute, null);
+        EditText editKey = dialogView.findViewById(R.id.editKey);
+        EditText editValue = dialogView.findViewById(R.id.editValue);
+        
+        new AlertDialog.Builder(getContext())
+            .setTitle("Adicionar Atributo")
+            .setView(dialogView)
+            .setPositiveButton("Adicionar", (dialog, which) -> {
+                String key = editKey.getText().toString().trim();
+                String value = editValue.getText().toString().trim();
+                
+                if (key.isEmpty() || value.isEmpty()) {
+                    Toast.makeText(getContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                if (viewModel != null) {
+                    viewModel.addProfileAttribute(key, value);
+                    Toast.makeText(getContext(), "Atributo adicionado", Toast.LENGTH_SHORT).show();
+                }
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
     }
     
     private void logout() {
-        try {
-            if (getContext() == null) return;
-            
-            PreferencesHelper preferencesHelper = new PreferencesHelper(getContext());
-            preferencesHelper.clearUserSession();
-            
-            Intent intent = new Intent(getContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            
-            if (getActivity() != null) {
-                getActivity().finish();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (getContext() == null) return;
+        
+        // CORRIGIDO: Usa o método estático para limpar a sessão
+        PreferencesHelper.clearSession(getContext());
+        
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        
+        if (getActivity() != null) {
+            getActivity().finish();
         }
     }
     
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            loadUserData();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        loadUserData();
     }
 }

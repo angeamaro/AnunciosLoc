@@ -15,7 +15,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ao.co.isptec.aplm.anunciosloc.R;
 
-import ao.co.isptec.aplm.anunciosloc.ui.view.LoginActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.view.fragment.AnnouncementsFragment;
 import ao.co.isptec.aplm.anunciosloc.ui.view.fragment.HomeFragment;
 import ao.co.isptec.aplm.anunciosloc.ui.view.fragment.LocationsFragment;
@@ -30,23 +29,19 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private FragmentManager fragmentManager;
-    private PreferencesHelper preferencesHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         try {
-            setContentView(R.layout.activity_main_new);
-
-            // Inicializa PreferencesHelper
-            preferencesHelper = new PreferencesHelper(this);
-
-            // Verifica se usuário está logado
-            if (!preferencesHelper.isUserLoggedIn()) {
+            // Verifica se usuário está logado ANTES de carregar o layout
+            if (!PreferencesHelper.isLoggedIn(this)) { // CORRIGIDO: Chamada estática
                 redirectToLogin();
                 return;
             }
+
+            setContentView(R.layout.activity_main_new);
 
             // Esconde ActionBar
             if (getSupportActionBar() != null) {
@@ -59,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
             // Carrega fragment inicial (Home)
             if (savedInstanceState == null) {
-                // Verifica se há navegação específica do Intent
                 String navigateTo = getIntent().getStringExtra("navigate_to");
                 if (navigateTo != null) {
                     switch (navigateTo) {
@@ -87,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Se houver erro, redireciona para login
             redirectToLogin();
         }
     }
@@ -98,44 +91,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
-                String tag = "";
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment fragment = null;
+            String tag = "";
 
-                int itemId = item.getItemId();
+            int itemId = item.getItemId();
 
-                if (itemId == R.id.nav_home) {
-                    fragment = new HomeFragment();
-                    tag = "home";
-                } else if (itemId == R.id.nav_announcements) {
-                    fragment = new AnnouncementsFragment();
-                    tag = "announcements";
-                } else if (itemId == R.id.nav_create) {
-                    // Botão criar - abre CreateAnnouncementActivity
-                    try {
-                        Intent intent = new Intent(MainActivity.this, ao.co.isptec.aplm.anunciosloc.ui.view.CreateAnnouncementActivity.class);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return true;
-                } else if (itemId == R.id.nav_notifications) {
-                    fragment = new NotificationsFragment();
-                    tag = "notifications";
-                } else if (itemId == R.id.nav_locations) {
-                    fragment = new LocationsFragment();
-                    tag = "locations";
+            if (itemId == R.id.nav_home) {
+                fragment = new HomeFragment();
+                tag = "home";
+            } else if (itemId == R.id.nav_announcements) {
+                fragment = new AnnouncementsFragment();
+                tag = "announcements";
+            } else if (itemId == R.id.nav_create) {
+                try {
+                    Intent intent = new Intent(MainActivity.this, CreateAnnouncementActivity.class);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                if (fragment != null) {
-                    loadFragment(fragment, tag);
-                    return true;
-                }
-
-                return false;
+                return true;
+            } else if (itemId == R.id.nav_notifications) {
+                fragment = new NotificationsFragment();
+                tag = "notifications";
+            } else if (itemId == R.id.nav_locations) {
+                fragment = new LocationsFragment();
+                tag = "locations";
             }
+
+            if (fragment != null) {
+                loadFragment(fragment, tag);
+                return true;
+            }
+
+            return false;
         });
     }
 
@@ -143,11 +132,9 @@ public class MainActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // Previne voltar para tela de login após logout
                 if (fragmentManager.getBackStackEntryCount() > 0) {
                     fragmentManager.popBackStack();
                 } else {
-                    // Remove callback e chama o comportamento padrão
                     setEnabled(false);
                     getOnBackPressedDispatcher().onBackPressed();
                 }
@@ -165,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
-    // Métodos públicos para navegação entre fragments
     public void navigateToLocations() {
         loadFragment(new LocationsFragment(), "locations");
         bottomNavigationView.setSelectedItemId(R.id.nav_locations);
@@ -191,9 +177,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Verifica novamente se usuário está logado
-        if (!preferencesHelper.isUserLoggedIn()) {
+        // Verifica novamente se usuário está logado ao voltar para a tela
+        if (!PreferencesHelper.isLoggedIn(this)) { // CORRIGIDO: Chamada estática
             redirectToLogin();
         }
     }

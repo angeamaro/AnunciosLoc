@@ -70,18 +70,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             editEmail.setEnabled(!isLoading);
         });
         
-        // Observa sucesso de recuperação
-        authViewModel.getPasswordRecoverySuccess().observe(this, success -> {
-            if (success != null && success) {
-                Toast.makeText(this, R.string.success_password_recovery, Toast.LENGTH_LONG).show();
-                
-                // Volta para Login após 2 segundos
-                editEmail.postDelayed(() -> {
-                    finish();
-                }, 2000);
-            }
-        });
-        
+        // O método getPasswordRecoverySuccess foi removido do ViewModel.
+        // A lógica de sucesso deve ser reimplementada quando houver uma API para isso.
+
         // Observa mensagens de erro
         authViewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
@@ -96,7 +87,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         
         String email = editEmail.getText().toString().trim();
         
-        // Validações
         boolean isValid = true;
         
         if (!ValidationUtils.isNotEmpty(email)) {
@@ -108,7 +98,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
         
         if (isValid) {
-            authViewModel.recoverPassword(email);
+            // A funcionalidade foi removida do ViewModel. Exibe uma mensagem temporária.
+            Toast.makeText(this, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show();
+            // authViewModel.recoverPassword(email); // Linha removida
         }
     }
 }

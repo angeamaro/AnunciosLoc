@@ -18,18 +18,16 @@ import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.data.model.User;
 
 /**
- * Adapter para selecionar usuários em whitelist/blacklist
+ * Adapter para selecionar usuários, adaptado ao novo modelo User.
  */
 public class UserSelectionAdapter extends RecyclerView.Adapter<UserSelectionAdapter.UserViewHolder> {
     
     private List<User> users;
-    private Set<String> selectedKeys;
-    private boolean isWhitelist;
+    private Set<Long> selectedIds; // Alterado de String para Long
     
-    public UserSelectionAdapter(List<User> users, List<String> initialSelectedKeys, boolean isWhitelist) {
+    public UserSelectionAdapter(List<User> users, List<Long> initialSelectedIds) {
         this.users = users;
-        this.selectedKeys = new HashSet<>(initialSelectedKeys);
-        this.isWhitelist = isWhitelist;
+        this.selectedIds = new HashSet<>(initialSelectedIds);
     }
     
     @NonNull
@@ -56,56 +54,40 @@ public class UserSelectionAdapter extends RecyclerView.Adapter<UserSelectionAdap
         notifyDataSetChanged();
     }
     
-    public List<String> getSelectedKeys() {
-        return new ArrayList<>(selectedKeys);
+    public List<Long> getSelectedIds() { // Renomeado e tipo de retorno alterado
+        return new ArrayList<>(selectedIds);
     }
     
     class UserViewHolder extends RecyclerView.ViewHolder {
         private TextView txtUserName;
-        private TextView txtUserEmail;
-        private TextView txtPublicKey;
         private CheckBox checkBox;
         
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             txtUserName = itemView.findViewById(R.id.txtUserName);
-            txtUserEmail = itemView.findViewById(R.id.txtUserEmail);
-            txtPublicKey = itemView.findViewById(R.id.txtPublicKey);
             checkBox = itemView.findViewById(R.id.checkBox);
+            
+            // Os campos de email e public key serão removidos do layout a seguir
         }
         
         public void bind(User user) {
-            txtUserName.setText(user.getName());
-            txtUserEmail.setText(user.getEmail());
+            txtUserName.setText(user.getUsername());
             
-            // Mostra a chave pública truncada
-            String publicKey = user.getPublicKey();
-            if (publicKey != null && publicKey.length() > 20) {
-                txtPublicKey.setText(publicKey.substring(0, 20) + "...");
-            } else {
-                txtPublicKey.setText(publicKey);
-            }
-            
-            // Define se está selecionado
-            checkBox.setChecked(selectedKeys.contains(user.getPublicKey()));
+            // Define se está selecionado com base no ID
+            checkBox.setChecked(selectedIds.contains(user.getId()));
             
             // Listener para seleção
             itemView.setOnClickListener(v -> {
-                boolean isChecked = !checkBox.isChecked();
-                checkBox.setChecked(isChecked);
-                
-                if (isChecked) {
-                    selectedKeys.add(user.getPublicKey());
-                } else {
-                    selectedKeys.remove(user.getPublicKey());
-                }
+                // Inverte o estado do checkbox ao clicar em qualquer sítio do item
+                checkBox.setChecked(!checkBox.isChecked());
             });
             
+            // Listener para quando o estado do checkbox muda
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    selectedKeys.add(user.getPublicKey());
+                    selectedIds.add(user.getId());
                 } else {
-                    selectedKeys.remove(user.getPublicKey());
+                    selectedIds.remove(user.getId());
                 }
             });
         }
