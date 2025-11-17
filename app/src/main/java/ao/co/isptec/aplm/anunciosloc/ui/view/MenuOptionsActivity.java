@@ -3,7 +3,6 @@ package ao.co.isptec.aplm.anunciosloc.ui.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +19,7 @@ public class MenuOptionsActivity extends AppCompatActivity {
     private ImageButton btnBack;
     private MaterialCardView cardPerfil, cardDefinicoes, cardInteresses, cardPoliticas, cardSair;
     private PreferencesHelper preferencesHelper;
+    private String origem; // nova variável para identificar a origem
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +33,16 @@ public class MenuOptionsActivity extends AppCompatActivity {
 
         preferencesHelper = new PreferencesHelper(this);
 
+        // Lê a origem enviada via Intent
+        origem = getIntent().getStringExtra("ORIGEM");
+
         initializeViews();
         setupListeners();
     }
 
     private void initializeViews() {
         btnBack = findViewById(R.id.btnBack);
-        
+
         // Conta
         cardPerfil = findViewById(R.id.cardPerfil);
         cardDefinicoes = findViewById(R.id.cardDefinicoes);
@@ -50,7 +53,15 @@ public class MenuOptionsActivity extends AppCompatActivity {
 
     private void setupListeners() {
         // Botão voltar
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            if ("LOCAL".equals(origem)) {
+                // Se veio do LocalFragment, apenas fecha a activity para voltar
+                finish();
+            } else {
+                // Para outras origens, comportamento padrão
+                finish();
+            }
+        });
 
         // Conta
         cardPerfil.setOnClickListener(v -> {
@@ -73,15 +84,13 @@ public class MenuOptionsActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        cardSair.setOnClickListener(v -> {
-            logout();
-        });
+        cardSair.setOnClickListener(v -> logout());
     }
 
     private void logout() {
         // Limpa dados do usuário
         preferencesHelper.clearUserSession();
-        
+
         // Redireciona para Login
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

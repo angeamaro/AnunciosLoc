@@ -1,6 +1,5 @@
 package ao.co.isptec.aplm.anunciosloc.ui.adapter;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import ao.co.isptec.aplm.anunciosloc.data.model.Location;
 public class LocalAdapter extends RecyclerView.Adapter<LocalAdapter.ViewHolder> {
 
     private List<Location> locais;
+    private List<Location> originalList;
     private OnLocalClickListener clickListener;
 
     public interface OnLocalClickListener {
@@ -29,15 +29,39 @@ public class LocalAdapter extends RecyclerView.Adapter<LocalAdapter.ViewHolder> 
     }
 
     public LocalAdapter(List<Location> locais) {
-        this.locais = locais != null ? locais : new ArrayList<>();
+        this.originalList = new ArrayList<>(locais != null ? locais : new ArrayList<>());
+        this.locais = new ArrayList<>(this.originalList);
     }
 
     public void setOnLocalClickListener(OnLocalClickListener listener) {
         this.clickListener = listener;
     }
 
-    public void updateLocais(List<Location> newLocais) {
-        this.locais = newLocais != null ? newLocais : new ArrayList<>();
+    public void removeItem(Location local) {
+        int positionInFullList = originalList.indexOf(local);
+        int positionInCurrentList = locais.indexOf(local);
+
+        if (positionInFullList != -1) originalList.remove(positionInFullList);
+        if (positionInCurrentList != -1) {
+            locais.remove(positionInCurrentList);
+            notifyItemRemoved(positionInCurrentList);
+            notifyItemRangeChanged(positionInCurrentList, locais.size());
+        }
+    }
+
+    public void filterByMeusLocais(String currentUserId) {
+        locais.clear();
+        for (Location loc : originalList) {
+            if (currentUserId.equals(loc.getCreatedBy())) locais.add(loc);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void filterByOutrosLocais(String currentUserId) {
+        locais.clear();
+        for (Location loc : originalList) {
+            if (!currentUserId.equals(loc.getCreatedBy())) locais.add(loc);
+        }
         notifyDataSetChanged();
     }
 
@@ -52,42 +76,48 @@ public class LocalAdapter extends RecyclerView.Adapter<LocalAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Location local = locais.get(position);
-
-        // Título
-        holder.txtTitle.setText(local.getName());
-
-        // Data formatada
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        String formattedDate = sdf.format(new Date(local.getCreatedAt()));
-        holder.txtDate.setText("Criado em " + formattedDate);
-
-        // Determina se é Wi-Fi ou GPS
+        boolean isMeuLocal = "usuario123".equals(local.getCreatedBy());
         boolean isWifi = local.getSsid() != null && !local.getSsid().isEmpty();
 
+        // Título e data
+        holder.txtTitle.setText(local.getName());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        holder.txtDate.setText("Criado em " + sdf.format(new Date(local.getCreatedAt())));
+
+        // Ícones grandes
         if (isWifi) {
-            holder.iconType.setImageResource(R.drawable.ic_wifi_large);
-            holder.iconType.setBackgroundResource(R.drawable.bg_circle_purple); // fundo roxo
-            holder.txtSsidOrCoords.setText(local.getSsid());
-
-            holder.chipWifi.setVisibility(View.VISIBLE);
-            holder.chipGps.setVisibility(View.GONE); // esconde GPS
-        } else { // GPS
-            holder.iconType.setImageResource(R.drawable.ic_location_on);
-            holder.iconType.setBackgroundResource(R.drawable.bg_circle_blue_light); // fundo azul claro
-            holder.iconType.setColorFilter(Color.BLUE); // ícone azul
-            holder.txtSsidOrCoords.setText(local.getFormattedCoordinates());
-
-            holder.chipWifi.setVisibility(View.GONE);
-            holder.chipGps.setVisibility(View.VISIBLE); // mostra chip GPS azul
+            holder.iconWifiCard.setVisibility(View.VISIBLE);
+            holder.iconGpsCard.setVisibility(View.GONE);
+            holder.txtDetails.setText(local.getSsid());
+        } else {
+            holder.iconWifiCard.setVisibility(View.GONE);
+            holder.iconGpsCard.setVisibility(View.VISIBLE);
+            holder.txtDetails.setText(local.getFormattedCoordinates());
         }
 
-        // "Meu Local" escondido por padrão
-        holder.chipMeuLocal.setVisibility(View.GONE);
+        // CHIPS — A MÁGICA FINAL (CORRIGIDO!)
+        if (isWifi) {
+            holder.chipWifi.setVisibility(View.VISIBLE);
+            holder.chipGps.setVisibility(View.INVISIBLE);   // ← INVISIBLE (mantém espaço!)
+        } else {
+            holder.chipWifi.setVisibility(View.GONE);
+            holder.chipGps.setVisibility(View.VISIBLE);
+        }
 
-        // Listeners para ações
-        if (clickListener != null) {
+        // "Meu Local" — sempre alinhado perfeitamente
+        holder.chipMeuLocal.setVisibility(isMeuLocal ? View.VISIBLE : View.GONE);
+
+        // Botões editar/eliminar
+        if (isMeuLocal && clickListener != null) {
+            holder.iconEdit.setVisibility(View.VISIBLE);
+            holder.iconDelete.setVisibility(View.VISIBLE);
             holder.iconEdit.setOnClickListener(v -> clickListener.onEditClick(local));
             holder.iconDelete.setOnClickListener(v -> clickListener.onDeleteClick(local));
+        } else {
+            holder.iconEdit.setVisibility(View.GONE);
+            holder.iconDelete.setVisibility(View.GONE);
+            holder.iconEdit.setOnClickListener(null);
+            holder.iconDelete.setOnClickListener(null);
         }
     }
 
@@ -96,22 +126,21 @@ public class LocalAdapter extends RecyclerView.Adapter<LocalAdapter.ViewHolder> 
         return locais.size();
     }
 
+    // VIEWHOLDER CORRIGIDO (nomes certos!)
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtTitle, txtSsidOrCoords, txtDate;
-        TextView chipWifi, chipMeuLocal, chipGps;
-        ImageView iconType, iconEdit, iconDelete;
+        TextView txtTitle, txtDetails, txtDate, chipWifi, chipGps, chipMeuLocal;
+        ImageView iconWifiCard, iconGpsCard, iconEdit, iconDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.text_local_title);
-            txtSsidOrCoords = itemView.findViewById(R.id.text_ssid);
+            txtDetails = itemView.findViewById(R.id.text_ssid);
             txtDate = itemView.findViewById(R.id.text_created_date);
-
-            iconType = itemView.findViewById(R.id.icon_wifi_card);
-            chipWifi = itemView.findViewById(R.id.chip_wifi);
+            iconWifiCard = itemView.findViewById(R.id.icon_wifi_card);
+            iconGpsCard = itemView.findViewById(R.id.icon_GPS_card);
+            chipWifi = itemView.findViewById(R.id.chip_wifi);           // ← CORRETO
+            chipGps = itemView.findViewById(R.id.chip_gps);             // ← CORRETO
             chipMeuLocal = itemView.findViewById(R.id.chip_meu_local);
-            chipGps = itemView.findViewById(R.id.chip_gps); // novo chip GPS
-
             iconEdit = itemView.findViewById(R.id.icon_edit);
             iconDelete = itemView.findViewById(R.id.icon_delete);
         }

@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Para localização em background (opcional, caso uses geolocalização contínua) -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -19,12 +21,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AnunciosLoc">
-        
+
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
-        
+
         <!-- Splash Screen (Launcher) -->
         <activity
             android:name=".ui.view.SplashActivity"
@@ -35,23 +37,29 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        
+
         <!-- Main Activity -->
         <activity
             android:name=".ui.view.MainActivity"
             android:exported="false" />
-        
+
+        <!-- Local Activity (para o clique no contador) -->
+        <activity
+            android:name=".ui.view.LocalActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MainActivity" />
+
         <!-- Authentication Activities -->
         <activity
             android:name=".ui.view.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        
+
         <activity
             android:name=".ui.view.RegisterActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        
+
         <activity
             android:name=".ui.view.ForgotPasswordActivity"
             android:exported="false"
@@ -73,55 +81,55 @@
             android:exported="false"
             android:parentActivityName=".ui.view.MenuOptionsActivity" />
 
-        
         <!-- Location Activities -->
         <activity
             android:name=".ui.view.AddLocationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.view.MainActivity" />
-        
+
         <!-- Announcement Activities -->
         <activity
             android:name=".ui.view.CreateAnnouncementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.view.MainActivity" />
-        
+
         <activity
             android:name=".ui.view.AnnouncementDetailActivity"
             android:exported="false"
             android:parentActivityName=".ui.view.MainActivity" />
-        
+
         <activity
             android:name=".ui.view.ConfigurePolicyActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.view.CreateAnnouncementActivity" />
-        
+
         <!-- Menu Options Activity -->
         <activity
             android:name=".ui.view.MenuOptionsActivity"
             android:exported="false"
             android:parentActivityName=".ui.view.MainActivity" />
-        
+
         <!-- Interests Activities -->
         <activity
             android:name=".ui.view.InterestsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.view.MenuOptionsActivity" />
-        
+            android:parentActivityName=".ui.view.MenuOptionsActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+
         <activity
             android:name=".ui.view.InterestValuesActivity"
             android:exported="false"
             android:parentActivityName=".ui.view.InterestsActivity" />
-        
+
         <!-- Policies Activity -->
         <activity
             android:name=".ui.view.PoliciesActivity"
             android:exported="false"
             android:parentActivityName=".ui.view.MenuOptionsActivity" />
-        
+
     </application>
 
 </manifest>

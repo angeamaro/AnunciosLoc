@@ -1,15 +1,17 @@
 package ao.co.isptec.aplm.anunciosloc.ui.view;
 
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.View;
+import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+
 import java.util.LinkedHashMap;
 
 import ao.co.isptec.aplm.anunciosloc.R;
@@ -17,7 +19,7 @@ import ao.co.isptec.aplm.anunciosloc.R;
 public class InterestsActivity extends AppCompatActivity {
 
     private EditText editChave, editValor;
-    private LinearLayout listaPares;
+    private GridLayout listaPares;
     private LinkedHashMap<String, String> pares = new LinkedHashMap<>();
 
     @Override
@@ -36,18 +38,15 @@ public class InterestsActivity extends AppCompatActivity {
         btnVoltar.setOnClickListener(v -> finish());
 
         // Botão salvar par chave-valor
-        btnSalvar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String chave = editChave.getText().toString().trim();
-                String valor = editValor.getText().toString().trim();
+        btnSalvar.setOnClickListener(v -> {
+            String chave = editChave.getText().toString().trim();
+            String valor = editValor.getText().toString().trim();
 
-                if (!chave.isEmpty() && !valor.isEmpty()) {
-                    pares.put(chave, valor);
-                    atualizarLista();
-                    editChave.setText("");
-                    editValor.setText("");
-                }
+            if (!chave.isEmpty() && !valor.isEmpty()) {
+                pares.put(chave, valor);
+                atualizarLista();
+                editChave.setText("");
+                editValor.setText("");
             }
         });
     }
@@ -58,16 +57,39 @@ public class InterestsActivity extends AppCompatActivity {
         for (String chave : pares.keySet()) {
             TextView chip = new TextView(this);
             chip.setText(chave + " : " + pares.get(chave));
-            chip.setBackgroundResource(R.drawable.edittext_bg);
+            chip.setBackgroundResource(R.drawable.bg_item_par);
             chip.setPadding(24, 16, 24, 16);
             chip.setTextColor(getColor(android.R.color.black));
             chip.setTextSize(14);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            // GridLayout.LayoutParams correto
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = 0; // distribuir igualmente
+            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
             params.setMargins(8, 8, 8, 8);
+
             chip.setLayoutParams(params);
+
             listaPares.addView(chip);
         }
+    }
+
+    // Fecha o teclado quando clicas fora do EditText
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

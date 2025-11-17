@@ -94,23 +94,36 @@
         </LinearLayout>
 
         <!-- Tabs -->
+
+        <!-- Tabs: Meus Locais e Outros Locais -->
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+            android:id="@+id/tabMeusOutrosLocais"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_below="@id/leftHeader"
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_tabs_rounded"
-            app:tabIndicatorHeight="0dp"
-            app:tabBackground="@drawable/tab_selector"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorFullWidth="false"
+            app:tabSelectedTextColor="@color/white"
             app:tabTextColor="@color/white"
-            app:tabSelectedTextColor="@color/blue_600"
-            app:tabRippleColor="@null"
-            app:tabMode="fixed"
             app:tabGravity="fill"
-            app:tabPaddingStart="0dp"
-            app:tabPaddingEnd="0dp"
-            style="@style/Widget.MaterialComponents.TabLayout" />
+            app:tabMode="fixed"
+            app:tabRippleColor="@null">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabMeusLocais"
+                android:text="Meus Locais"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabOutrosLocais"
+                android:text="Outros Locais"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+        </com.google.android.material.tabs.TabLayout>
+
 
     </RelativeLayout>
 
