@@ -1,0 +1,41 @@
+<!-- res/values/styles.xml -->
+<resources>
+
+    <!-- DIALOG PERSONALIZADO: fundo branco, texto preto, cantos retos -->
+    <style name="CustomAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+
+        <!-- Fundo branco -->
+        <item name="android:background">@android:color/white</item>
+
+        <!-- Título preto -->
+        <item name="materialAlertDialogTitleTextStyle">@style/DialogTitleBlack</item>
+
+        <!-- Mensagem preta -->
+        <item name="materialAlertDialogBodyTextStyle">@style/DialogMessageBlack</item>
+
+        <!-- Remove TODAS as curvas (cantos retos) -->
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceNoCorner</item>
+    </style>
+
+    <!-- Título preto -->
+    <style name="DialogTitleBlack" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <!-- Mensagem preta -->
+    <style name="DialogMessageBlack" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <!-- Remove arredondamento (cantos retos) -->
+    <style name="ShapeAppearanceNoCorner" parent="">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+    </style>
+
+    <style name="DialogShapeNoCorner" parent="">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+    </style>
+
+</resources>

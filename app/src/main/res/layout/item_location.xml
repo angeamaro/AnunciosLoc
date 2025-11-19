@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Icon -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_location_on"
+            android:contentDescription="Local"
+            app:tint="@color/blue_600"
+            android:layout_gravity="center_vertical" />
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <!-- Name -->
+            <TextView
+                android:id="@+id/txtName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome do Local"
+                android:textColor="@color/gray_800"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Coordinates -->
+            <TextView
+                android:id="@+id/txtCoordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="0.000000, 0.000000"
+                android:textColor="@color/gray_600"
+                android:textSize="14sp" />
+
+            <!-- Radius -->
+            <TextView
+                android:id="@+id/txtRadius"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="100m"
+                android:textColor="@color/gray_500"
+                android:textSize="12sp"
+                android:drawableStart="@drawable/ic_wifi"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/gray_500" />
+
+            <!-- SSID -->
+            <TextView
+                android:id="@+id/txtSsid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="📶 WiFi SSID"
+                android:textColor="@color/blue_600"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Arrow -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Opções"
+            app:tint="@color/gray_400"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

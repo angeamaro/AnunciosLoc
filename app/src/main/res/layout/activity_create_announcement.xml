@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gray_bg">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/purple_600"
+        android:elevation="4dp"
+        app:titleTextColor="@color/white"
+        app:navigationIconTint="@color/white" />
+
+    <!-- Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Título -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/announcement_title"
+                android:layout_marginBottom="16dp"
+                app:startIconDrawable="@drawable/ic_announcement"
+                app:startIconTint="@color/purple_600"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="2"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Conteúdo -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/announcement_content"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:minLines="4"
+                    android:maxLines="8"
+                    android:gravity="top"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Localização -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Localização"
+                android:textColor="@color/gray_900"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/announcement_location"
+                    android:layout_marginEnd="8dp"
+                    app:startIconDrawable="@drawable/ic_location_on"
+                    app:startIconTint="@color/blue_600"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spinnerLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCreateLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nova"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/blue_600"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_add_white"
+                    app:iconTint="@color/white"
+                    style="@style/Widget.Material3.Button" />
+            </LinearLayout>
+
+            <!-- Janela de Tempo -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Janela de Tempo"
+                android:textColor="@color/gray_900"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Data e Hora Início -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Data de Início"
+                    android:layout_marginEnd="8dp"
+                    app:startIconDrawable="@drawable/ic_calendar"
+                    app:startIconTint="@color/orange_600"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editStartDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Hora de Início"
+                    app:startIconDrawable="@drawable/ic_time"
+                    app:startIconTint="@color/orange_600"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editStartTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Data e Hora Término -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Data de Término"
+                    android:layout_marginEnd="8dp"
+                    app:startIconDrawable="@drawable/ic_calendar"
+                    app:startIconTint="@color/orange_600"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editEndDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Hora de Término"
+                    app:startIconDrawable="@drawable/ic_time"
+                    app:startIconTint="@color/orange_600"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editEndTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Tipo de Entrega -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo de Entrega"
+                android:textColor="@color/gray_900"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupDeliveryMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioCentralized"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Centralizada (via Servidor)"
+                    android:checked="true"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="O servidor notifica automaticamente os clientes quando estes reportam a sua localização. Requer conexão com o servidor."
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioDecentralized"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descentralizada (P2P WiFi Direct)"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Você entrega diretamente a mensagem a dispositivos próximos usando WiFi Direct. Funciona offline, mas requer proximidade física."
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp" />
+            </RadioGroup>
+
+            <!-- Política de Entrega -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Política de Entrega"
+                android:textColor="@color/gray_900"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupPolicy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioEveryone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Todos"
+                    android:checked="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioWhitelist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Whitelist (Apenas usuários específicos)"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioBlacklist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Blacklist (Excluir usuários específicos)"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black" />
+            </RadioGroup>
+
+            <!-- Botão Configurar Política -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConfigurePolicy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:text="Configurar Regras"
+                android:textColor="@color/purple_600"
+                app:icon="@drawable/ic_edit"
+                app:iconTint="@color/purple_600"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:visibility="gone" />
+
+            <!-- Botão Publicar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Publicar Anúncio"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:backgroundTint="@color/purple_600"
+                app:cornerRadius="8dp"
+                app:icon="@drawable/ic_check"
+                app:iconTint="@color/white"
+                android:paddingVertical="12dp" />
+
+            <!-- ProgressBar -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:indeterminateTint="@color/purple_600" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

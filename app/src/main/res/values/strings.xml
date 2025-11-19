@@ -1,0 +1,154 @@
+<resources>
+    <string name="app_name">AnunciosLoc</string>
+
+    <!-- Splash -->
+    <string name="splash_loading">Carregando…</string>
+
+    <!-- Autenticação -->
+    <string name="login_title">Entrar</string>
+    <string name="register_title">Criar Conta</string>
+    <string name="forgot_password_title">Recuperar Senha</string>
+    <string name="email">Email</string>
+    <string name="password">Senha</string>
+    <string name="username">Nome de utilizador</string>
+    <string name="name">Nome completo</string>
+    <string name="phone">Telefone</string>
+    <string name="login_button">Entrar</string>
+    <string name="register_button">Registar</string>
+    <string name="forgot_password">Esqueceu a senha?</string>
+    <string name="no_account">Não tem conta?</string>
+    <string name="register_here">Registe-se aqui</string>
+    <string name="have_account">Já tem conta?</string>
+    <string name="login_here">Entre aqui</string>
+    <string name="send_recovery_email">Enviar email de recuperação</string>
+
+    <!-- Navegação -->
+    <string name="nav_locations">Locais</string>
+    <string name="nav_announcements">Anúncios</string>
+    <string name="nav_notifications">Notificações</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Localizações -->
+    <string name="locations_title">Localizações</string>
+    <string name="add_location">Adicionar Local</string>
+    <string name="edit_location">Editar Local</string>
+    <string name="location_name">Nome do local</string>
+    <string name="location_latitude">Latitude</string>
+    <string name="location_longitude">Longitude</string>
+    <string name="location_radius">Raio (metros)</string>
+    <string name="location_ssid">SSID WiFi (opcional)</string>
+    <string name="location_description">Descrição</string>
+    <string name="save_location">Guardar Local</string>
+    <string name="delete_location">Eliminar Local</string>
+    <string name="no_locations">Nenhum local encontrado</string>
+    <string name="nearby_locations">Locais Próximos</string>
+
+    <!-- Anúncios -->
+    <string name="announcements_title">Anúncios</string>
+    <string name="create_announcement">Criar Anúncio</string>
+    <string name="edit_announcement">Editar Anúncio</string>
+    <string name="announcement_title">Título</string>
+    <string name="announcement_content">Conteúdo</string>
+    <string name="announcement_location">Localização</string>
+    <string name="announcement_author">Autor</string>
+    <string name="announcement_date">Data</string>
+    <string name="announcement_start_date">Data de Início</string>
+    <string name="announcement_end_date">Data de Término</string>
+    <string name="announcement_views">Visualizações</string>
+    <string name="save_announcement">Publicar Anúncio</string>
+    <string name="delete_announcement">Eliminar Anúncio</string>
+    <string name="no_announcements">Nenhum anúncio disponível</string>
+    <string name="time_remaining">Tempo restante</string>
+    <string name="expired">Expirado</string>
+
+    <!-- Políticas de Entrega -->
+    <string name="delivery_policy">Política de Entrega</string>
+    <string name="policy_everyone">Todos</string>
+    <string name="policy_whitelist">Whitelist (Apenas)</string>
+    <string name="policy_blacklist">Blacklist (Exceto)</string>
+    <string name="policy_rules">Regras</string>
+    <string name="add_rule">Adicionar Regra</string>
+    <string name="attribute_key">Atributo</string>
+    <string name="attribute_value">Valor</string>
+    <string name="time_window">Janela Temporal</string>
+    <string name="start_date">Data de Início</string>
+    <string name="end_date">Data de Fim</string>
+
+    <!-- Notificações -->
+    <string name="notifications_title">Notificações</string>
+    <string name="no_notifications">Nenhuma notificação</string>
+    <string name="mark_all_read">Marcar todas como lidas</string>
+    <string name="clear_all">Limpar todas</string>
+    <string name="notification_new_announcement">Novo anúncio disponível</string>
+    <string name="notification_location_entered">Você entrou numa nova área</string>
+    <string name="notification_message_received">Mensagem recebida</string>
+    <string name="all_notifications_marked_read">Todas as notificações foram marcadas como lidas</string>
+
+    <!-- Perfil -->
+    <string name="profile_title">Perfil</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="profile_attributes">Atributos do Perfil</string>
+    <string name="add_attribute">Adicionar Atributo</string>
+    <string name="remove_attribute">Remover</string>
+    <string name="save_profile">Guardar Perfil</string>
+    <string name="logout">Sair</string>
+    <string name="logout_confirmation">Tem certeza que deseja sair?</string>
+
+    <!-- Atributos comuns -->
+    <string name="attr_profession">Profissão</string>
+    <string name="attr_club">Clube Favorito</string>
+    <string name="attr_interest">Interesse</string>
+
+    <!-- Mensagens -->
+    <string name="loading">A carregar…</string>
+    <string name="saving">A guardar…</string>
+    <string name="deleting">A eliminar…</string>
+    <string name="success">Sucesso!</string>
+    <string name="error">Erro</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="ok">OK</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="save">Guardar</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+    <string name="search">Pesquisar</string>
+    <string name="filter">Filtrar</string>
+    <string name="options">Opções</string>
+
+    <!-- Validações -->
+    <string name="error_empty_field">Este campo é obrigatório</string>
+    <string name="error_invalid_email">Email inválido</string>
+    <string name="error_invalid_password">Senha deve ter pelo menos 6 caracteres</string>
+    <string name="error_passwords_dont_match">As senhas não coincidem</string>
+    <string name="error_invalid_coordinates">Coordenadas inválidas</string>
+    <string name="error_invalid_radius">Raio inválido</string>
+
+    <!-- Sucesso -->
+    <string name="success_login">Login realizado com sucesso</string>
+    <string name="success_register">Conta criada com sucesso</string>
+    <string name="success_password_recovery">Email de recuperação enviado</string>
+    <string name="success_location_created">Local criado com sucesso</string>
+    <string name="success_location_updated">Local atualizado com sucesso</string>
+    <string name="success_location_deleted">Local eliminado com sucesso</string>
+    <string name="success_announcement_created">Anúncio publicado com sucesso</string>
+    <string name="success_announcement_updated">Anúncio atualizado com sucesso</string>
+    <string name="success_announcement_deleted">Anúncio eliminado com sucesso</string>
+    <string name="success_profile_updated">Perfil atualizado com sucesso</string>
+
+    <!-- WiFi Direct / P2P -->
+    <string name="wifi_direct_enabled">WiFi Direct ativado</string>
+    <string name="wifi_direct_disabled">WiFi Direct desativado</string>
+    <string name="searching_peers">A procurar dispositivos…</string>
+    <string name="peers_found">Dispositivos encontrados</string>
+    <string name="sending_message">A enviar mensagem…</string>
+    <string name="message_sent">Mensagem enviada</string>
+    <string name="message_received">Mensagem recebida</string>
+
+    <!-- GPS -->
+    <string name="gps_enabled">GPS ativado</string>
+    <string name="gps_disabled">GPS desativado</string>
+    <string name="location_permission_required">Permissão de localização necessária</string>
+    <string name="current_location">Localização atual</string>
+</resources>

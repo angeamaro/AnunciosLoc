@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/orange_500"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:id="@+id/cardContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Header com Título e Badge -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Título da Notificação"
+                android:textColor="@color/gray_900"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <!-- Badge "Novo" -->
+            <TextView
+                android:id="@+id/badgeNew"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Novo"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/bg_badge_orange"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+        </LinearLayout>
+
+        <!-- Mensagem -->
+        <TextView
+            android:id="@+id/txtMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Mensagem da notificação..."
+            android:textColor="@color/gray_600"
+            android:textSize="14sp"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <!-- Informações: Localização e Autor -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <!-- Localização -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_location_on"
+                    app:tint="@color/gray_500" />
+
+                <TextView
+                    android:id="@+id/txtLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Localização"
+                    android:textColor="@color/gray_500"
+                    android:textSize="12sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+
+            <!-- Autor -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/gray_500" />
+
+                <TextView
+                    android:id="@+id/txtAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Autor"
+                    android:textColor="@color/gray_500"
+                    android:textSize="12sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Footer: Data e Botões -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Data -->
+            <TextView
+                android:id="@+id/txtTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="01/01/2025"
+                android:textColor="@color/gray_400"
+                android:textSize="12sp" />
+
+            <!-- Botão Ver Mais -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnView"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Ver Mais"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:icon="@drawable/ic_visibility"
+                app:iconSize="16dp"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:strokeColor="@color/blue_500"
+                app:strokeWidth="1dp"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:textColor="@color/blue_600"
+                app:iconTint="@color/blue_600" />
+
+            <!-- Botão Guardar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:text="Guardar"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:icon="@drawable/ic_favorite"
+                app:iconSize="16dp"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:strokeColor="@color/orange_500"
+                app:strokeWidth="1dp"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:textColor="@color/orange_600"
+                app:iconTint="@color/orange_600" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

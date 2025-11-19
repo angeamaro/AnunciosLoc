@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="margin_top_wifi">8dp</dimen>
+    <dimen name="margin_top_gps">16dp</dimen>
+</resources>

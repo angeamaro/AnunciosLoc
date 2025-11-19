@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Header com Gradiente -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_gradient_blue_purple"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="-10dp"
+        android:paddingBottom="32dp">
+
+        <!-- Container à esquerda: Seta + Título + Contador -->
+        <LinearLayout
+            android:id="@+id/leftHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:gravity="start">
+
+            <!-- Seta de voltar (acima do título) -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="-10dp"
+                android:layout_marginBottom="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Voltar"
+                android:padding="6dp"
+                app:tint="@color/white" />
+
+            <!-- Título "Locais" -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Locais"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:fontFamily="sans-serif-medium" />
+            <!-- Contador (aumenta marginBottom para dar espaço em relação às tabs) -->
+            <TextView
+                android:id="@+id/txtLocationCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="45dp"
+            android:text="2 locais"
+            android:textColor="#B3E0F7FF"
+            android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Botão Adicionar (+) e Menu (à direita, + mais perto do menu) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Botão + (mais perto do menu) -->
+            <ImageButton
+                android:id="@+id/btnAddLocation"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_add"
+                android:contentDescription="Adicionar local"
+                android:padding="10dp"
+                app:tint="@color/white"
+                android:layout_marginEnd="4dp" />
+
+            <!-- Botão Menu (3 pontinhos) -->
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_more_vert"
+                android:contentDescription="Menu"
+                android:padding="10dp"
+                app:tint="@color/white" />
+        </LinearLayout>
+
+        <!-- Tabs -->
+
+        <!-- Tabs: Meus Locais e Outros Locais -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabMeusOutrosLocais"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@id/leftHeader"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_tabs_rounded"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorFullWidth="false"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/white"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            app:tabRippleColor="@null">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabMeusLocais"
+                android:text="Meus Locais"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabOutrosLocais"
+                android:text="Outros Locais"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+        </com.google.android.material.tabs.TabLayout>
+
+
+    </RelativeLayout>
+
+    <!-- Barra de Pesquisa -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:startIconDrawable="@drawable/ic_search"
+            app:startIconTint="@color/gray_400"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@color/gray_100"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pesquisar locais..."
+                android:textSize="14sp"
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerAnnouncements"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false" />
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imgEmpty"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_announcement"
+            app:tint="@color/gray_300"
+            android:contentDescription="Sem locais" />
+
+        <TextView
+            android:id="@+id/txtEmptyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Nenhum local guardado"
+            android:textColor="@color/gray_500"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+  <!-- Cor de preenchimento: Roxo bem claro (#E1BEE7) -->
+  <solid android:color="#E1F5FE" />
+
+  <!-- Borda (stroke): 1dp com a cor roxa mais escura (purple_600) -->
+  <stroke android:width="1dp" android:color="@color/blue_600" />
+
+  <!-- Cantos arredondados: 16dp para o formato de pílula (chip) -->
+  <corners android:radius="16dp" />
+</shape>

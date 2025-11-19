@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Header com Gradiente -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_gradient_blue_purple"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="48dp"
+        android:paddingBottom="32dp">
+
+        <!-- Título e Menu -->
+        <LinearLayout
+            android:id="@+id/headerContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/btnMenu"
+            android:layout_marginEnd="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Anúncios"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/txtAnnouncementCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="0 anúncios"
+                android:textColor="#B3E0F7FF"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentEnd="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Menu"
+            android:padding="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="@color/white" />
+
+        <!-- Tabs -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@id/headerContent"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_tabs_rounded"
+            app:tabIndicatorHeight="0dp"
+            app:tabBackground="@drawable/tab_selector"
+            app:tabTextColor="@color/white"
+            app:tabSelectedTextColor="@color/blue_600"
+            app:tabRippleColor="@null"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabPaddingStart="0dp"
+            app:tabPaddingEnd="0dp"
+            style="@style/Widget.MaterialComponents.TabLayout" />
+    </RelativeLayout>
+
+    <!-- Barra de Pesquisa -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:startIconDrawable="@drawable/ic_search"
+            app:startIconTint="@color/gray_400"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@color/gray_100"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pesquisar anúncios..."
+                android:textSize="14sp"
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <!-- RecyclerView com Anúncios -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerAnnouncements"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false" />
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imgEmpty"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_announcement"
+            app:tint="@color/gray_300"
+            android:contentDescription="Sem anúncios" />
+
+        <TextView
+            android:id="@+id/txtEmptyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Nenhum anúncio guardado"
+            android:textColor="@color/gray_500"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtEmptyMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Guarde anúncios interessantes para acessar rapidamente"
+            android:textColor="@color/gray_400"
+            android:textSize="14sp"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="Home" />
+    
+    <item
+        android:id="@+id/nav_announcements"
+        android:icon="@drawable/ic_announcement"
+        android:title="Anúncios" />
+    
+    <item
+        android:id="@+id/nav_create"
+        android:icon="@drawable/ic_nav_create"
+        android:enabled="true"
+        android:title="" />
+    
+    <item
+        android:id="@+id/nav_notifications"
+        android:icon="@drawable/ic_notifications"
+        android:title="Notificações" />
+    
+    <item
+        android:id="@+id/nav_locations"
+        android:icon="@drawable/ic_location"
+        android:title="Locais" />
+    
+</menu>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Ícone de localização (location pin) - CENTRALIZADO -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,35 C46.82,35 41,40.82 41,48 C41,57.25 54,73 54,73 C54,73 67,57.25 67,48 C67,40.82 61.18,35 54,35 Z M54,53 C51.24,53 49,50.76 49,48 C49,45.24 51.24,43 54,43 C56.76,43 59,45.24 59,48 C59,50.76 56.76,53 54,53 Z"/>
+    
+    <!-- Círculo interno do pin para dar mais destaque -->
+    <path
+        android:fillColor="#1976D2"
+        android:pathData="M54,46 C52.34,46 51,47.34 51,49 C51,50.66 52.34,52 54,52 C55.66,52 57,50.66 57,49 C57,47.34 55.66,46 54,46 Z"/>
+</vector>
