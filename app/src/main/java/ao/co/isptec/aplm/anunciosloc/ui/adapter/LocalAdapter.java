@@ -138,8 +138,8 @@ public class LocalAdapter extends RecyclerView.Adapter<LocalAdapter.ViewHolder> 
             txtDate = itemView.findViewById(R.id.text_created_date);
             iconWifiCard = itemView.findViewById(R.id.icon_wifi_card);
             iconGpsCard = itemView.findViewById(R.id.icon_GPS_card);
-            chipWifi = itemView.findViewById(R.id.chip_wifi);           // ← CORRETO
-            chipGps = itemView.findViewById(R.id.chip_gps);             // ← CORRETO
+            chipWifi = itemView.findViewById(R.id.chip_wifi);         
+            chipGps = itemView.findViewById(R.id.chip_gps);
             chipMeuLocal = itemView.findViewById(R.id.chip_meu_local);
             iconEdit = itemView.findViewById(R.id.icon_edit);
             iconDelete = itemView.findViewById(R.id.icon_delete);
