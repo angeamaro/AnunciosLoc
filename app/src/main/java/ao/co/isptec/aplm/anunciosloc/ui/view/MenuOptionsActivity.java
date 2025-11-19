@@ -11,87 +11,28 @@ import com.google.android.material.card.MaterialCardView;
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
 
-/**
- * MenuOptionsActivity - Tela de menu com todas as opções do app
- */
 public class MenuOptionsActivity extends AppCompatActivity {
-
-    private ImageButton btnBack;
-    private MaterialCardView cardPerfil, cardDefinicoes, cardInteresses, cardPoliticas, cardSair;
-    private PreferencesHelper preferencesHelper;
-    private String origem; // nova variável para identificar a origem
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_options);
 
-        // Esconde ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        preferencesHelper = new PreferencesHelper(this);
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        MaterialCardView cardPerfil = findViewById(R.id.cardPerfil);
+        MaterialCardView cardSair = findViewById(R.id.cardSair);
 
-        // Lê a origem enviada via Intent
-        origem = getIntent().getStringExtra("ORIGEM");
-
-        initializeViews();
-        setupListeners();
-    }
-
-    private void initializeViews() {
-        btnBack = findViewById(R.id.btnBack);
-
-        // Conta
-        cardPerfil = findViewById(R.id.cardPerfil);
-        cardDefinicoes = findViewById(R.id.cardDefinicoes);
-        cardInteresses = findViewById(R.id.cardInteresses);
-        cardPoliticas = findViewById(R.id.cardPoliticas);
-        cardSair = findViewById(R.id.cardSair);
-    }
-
-    private void setupListeners() {
-        // Botão voltar
-        btnBack.setOnClickListener(v -> {
-            if ("LOCAL".equals(origem)) {
-                // Se veio do LocalFragment, apenas fecha a activity para voltar
-                finish();
-            } else {
-                // Para outras origens, comportamento padrão
-                finish();
-            }
-        });
-
-        // Conta
-        cardPerfil.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ProfileActivity.class);
-            startActivity(intent);
-        });
-
-        cardDefinicoes.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-        });
-
-        cardInteresses.setOnClickListener(v -> {
-            Intent intent = new Intent(this, InterestsActivity.class);
-            startActivity(intent);
-        });
-
-        cardPoliticas.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PoliciesActivity.class);
-            startActivity(intent);
-        });
-
+        btnBack.setOnClickListener(v -> finish());
+        cardPerfil.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         cardSair.setOnClickListener(v -> logout());
     }
 
     private void logout() {
-        // Limpa dados do usuário
-        preferencesHelper.clearUserSession();
-
-        // Redireciona para Login
+        PreferencesHelper.clearSession(this);
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

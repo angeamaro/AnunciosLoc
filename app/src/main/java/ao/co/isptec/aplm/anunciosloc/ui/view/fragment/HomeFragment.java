@@ -25,16 +25,12 @@ import java.util.List;
 import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.ui.adapter.AnnouncementAdapter;
 import ao.co.isptec.aplm.anunciosloc.data.model.Announcement;
-import ao.co.isptec.aplm.anunciosloc.data.model.User;
-import ao.co.isptec.aplm.anunciosloc.data.repository.UserRepository;
 import ao.co.isptec.aplm.anunciosloc.ui.view.AnnouncementDetailActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.view.MenuOptionsActivity;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.AnnouncementViewModel;
 import ao.co.isptec.aplm.anunciosloc.utils.PreferencesHelper;
 
-/**
- * HomeFragment - Tela inicial com Bem-vindo e Anúncios Recentes
- */
+
 public class HomeFragment extends Fragment {
 
     private TextView txtUserName;
@@ -46,7 +42,6 @@ public class HomeFragment extends Fragment {
 
     private AnnouncementViewModel viewModel;
     private AnnouncementAdapter adapter;
-    private UserRepository userRepository;
 
     @Nullable
     @Override
@@ -75,29 +70,13 @@ public class HomeFragment extends Fragment {
     private void loadUserName() {
         if (getContext() == null || txtUserName == null) return;
 
-        userRepository = UserRepository.getInstance();
-        User currentUser = userRepository.getCurrentUser();
+        // Usa o método estático para obter o nome de usuário salvo
+        String userName = PreferencesHelper.getUserName(getContext());
 
-        if (currentUser != null) {
-            String userName = currentUser.getName();
-            if (userName != null && !userName.isEmpty()) {
-                txtUserName.setText(userName);
-            } else {
-                txtUserName.setText("Usuário");
-            }
+        if (userName != null && !userName.isEmpty()) {
+            txtUserName.setText(userName);
         } else {
-            // Tenta obter do PreferencesHelper
-            try {
-                PreferencesHelper preferencesHelper = new PreferencesHelper(getContext());
-                String userName = preferencesHelper.getUserName();
-                if (userName != null && !userName.isEmpty()) {
-                    txtUserName.setText(userName);
-                } else {
-                    txtUserName.setText("Usuário");
-                }
-            } catch (Exception e) {
-                txtUserName.setText("Usuário");
-            }
+            txtUserName.setText("Usuário"); // Fallback
         }
     }
 
@@ -124,7 +103,6 @@ public class HomeFragment extends Fragment {
         });
 
         btnViewAll.setOnClickListener(v -> {
-            // Navega para a aba de Anúncios
             if (getActivity() != null) {
                 com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = 
                     requireActivity().findViewById(R.id.bottomNavigation);
@@ -136,42 +114,18 @@ public class HomeFragment extends Fragment {
     }
 
     private void observeViewModel() {
-        // Observa anúncios
         viewModel.getAnnouncements().observe(getViewLifecycleOwner(), announcements -> {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    if (adapter == null || recyclerAnnouncements == null || txtEmpty == null) return;
-
-                    if (announcements != null && !announcements.isEmpty()) {
-                        // Mostra apenas os 5 mais recentes
+                    if (adapter != null && announcements != null) {
                         List<Announcement> recentAnnouncements = announcements.size() > 5 
                             ? announcements.subList(0, 5) 
                             : announcements;
                         adapter.updateAnnouncements(recentAnnouncements);
-                        txtEmpty.setVisibility(View.GONE);
-                        recyclerAnnouncements.setVisibility(View.VISIBLE);
-                    } else {
-                        txtEmpty.setVisibility(View.VISIBLE);
-                        recyclerAnnouncements.setVisibility(View.GONE);
                     }
-                    progressBar.setVisibility(View.GONE);
+                    txtEmpty.setVisibility(announcements == null || announcements.isEmpty() ? View.VISIBLE : View.GONE);
+                    recyclerAnnouncements.setVisibility(announcements != null && !announcements.isEmpty() ? View.VISIBLE : View.GONE);
                 });
-            }
-        });
-
-        // Observa loading
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading != null && isLoading) {
-                progressBar.setVisibility(View.VISIBLE);
-            } else {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-
-        // Observa erros
-        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-            if (error != null && !error.isEmpty()) {
-                progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -179,9 +133,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Recarrega dados quando o fragment retoma
-        if (viewModel != null) {
-            viewModel.loadAnnouncements();
-        }
+        viewModel.loadAnnouncements();
     }
 }

@@ -15,9 +15,6 @@ import ao.co.isptec.aplm.anunciosloc.R;
 import ao.co.isptec.aplm.anunciosloc.ui.viewmodel.AuthViewModel;
 import ao.co.isptec.aplm.anunciosloc.utils.ValidationUtils;
 
-/**
- * Tela de Recuperação de Senha
- */
 public class ForgotPasswordActivity extends AppCompatActivity {
     
     private EditText editEmail;
@@ -32,7 +29,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
         
-        // Esconde ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -51,64 +47,25 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
     
     private void initializeViewModel() {
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        authViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(AuthViewModel.class);
     }
     
     private void setupListeners() {
         btnSendEmail.setOnClickListener(v -> attemptPasswordRecovery());
-        
-        txtBackToLogin.setOnClickListener(v -> {
-            finish(); // Volta para LoginActivity
-        });
+        txtBackToLogin.setOnClickListener(v -> finish());
     }
     
     private void observeViewModel() {
-        // Observa estado de carregamento
-        authViewModel.getIsLoading().observe(this, isLoading -> {
-            progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            btnSendEmail.setEnabled(!isLoading);
-            editEmail.setEnabled(!isLoading);
-        });
-        
-        // Observa sucesso de recuperação
-        authViewModel.getPasswordRecoverySuccess().observe(this, success -> {
-            if (success != null && success) {
-                Toast.makeText(this, R.string.success_password_recovery, Toast.LENGTH_LONG).show();
-                
-                // Volta para Login após 2 segundos
-                editEmail.postDelayed(() -> {
-                    finish();
-                }, 2000);
-            }
-        });
-        
-        // Observa mensagens de erro
-        authViewModel.getErrorMessage().observe(this, error -> {
-            if (error != null && !error.isEmpty()) {
-                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-            }
-        });
+        // A lógica de recuperação de senha foi removida do ViewModel, 
+        // então os observadores correspondentes são desnecessários por agora.
     }
     
     private void attemptPasswordRecovery() {
-        // Limpa erros anteriores
-        editEmail.setError(null);
-        
         String email = editEmail.getText().toString().trim();
-        
-        // Validações
-        boolean isValid = true;
-        
-        if (!ValidationUtils.isNotEmpty(email)) {
-            editEmail.setError(getString(R.string.error_empty_field));
-            isValid = false;
-        } else if (!ValidationUtils.isValidEmail(email)) {
-            editEmail.setError(getString(R.string.error_invalid_email));
-            isValid = false;
-        }
-        
-        if (isValid) {
-            authViewModel.recoverPassword(email);
+        if (ValidationUtils.isValidEmail(email)) {
+            Toast.makeText(this, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show();
+        } else {
+            editEmail.setError("Email inválido");
         }
     }
 }
