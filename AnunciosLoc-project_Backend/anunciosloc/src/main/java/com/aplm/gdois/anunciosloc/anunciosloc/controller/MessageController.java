@@ -1,6 +1,5 @@
 package com.aplm.gdois.anunciosloc.anunciosloc.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,11 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aplm.gdois.anunciosloc.anunciosloc.entity.Message;
-import com.aplm.gdois.anunciosloc.anunciosloc.repository.MessageRepository;
+import com.aplm.gdois.anunciosloc.anunciosloc.service.MessageService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -25,35 +25,46 @@ import com.aplm.gdois.anunciosloc.anunciosloc.repository.MessageRepository;
 public class MessageController {
 
     @Autowired
-    private MessageRepository repo;
+    private MessageService messageService;
 
-    // 1. Listar mensagens de um local (o mais importante!)
+    // VER MENSAGENS DO LOCAL (com políticas aplicadas)
     @GetMapping("/location/{locationId}")
-    public List<Message> doLocal(@PathVariable Long locationId) {
-        return repo.findByLocationIdAndDeletedAtIsNull(locationId);
+    public List<Message> doLocal(@PathVariable Long locationId, HttpServletRequest request) {
+        Long viewerId = (Long) request.getAttribute("authenticatedUserId");
+        if (viewerId == null) return List.of();
+        return messageService.doLocal(locationId, viewerId);
     }
 
-    // 2. Criar nova mensagem
+    // CRIAR MENSAGEM
     @PostMapping
-    public Message criar(@RequestBody Message message) {
-        return repo.save(message);
+    public ResponseEntity<?> criar(@RequestBody Message message, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("authenticatedUserId");
+        if (userId == null) return ResponseEntity.status(401).body("Login necessário");
+        try {
+            Message criada = messageService.criar(message, userId);
+            return ResponseEntity.ok(criada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    // 3. Apagar (soft delete)
+    // APAGAR MENSAGEM
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> apagar(@PathVariable UUID id) {
-        return repo.findById(id)
-                .map(msg -> {
-                    msg.setDeletedAt(LocalDateTime.now());
-                    repo.save(msg);
-                    return ResponseEntity.ok().build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> apagar(@PathVariable UUID id, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("authenticatedUserId");
+        if (userId == null) return ResponseEntity.status(401).body("Login necessário");
+        try {
+            messageService.apagar(id, userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    // 4. Minhas mensagens publicadas
+    // MINHAS MENSAGENS
     @GetMapping("/minhas")
-    public List<Message> minhas(@RequestParam Long publisherId) {
-        return repo.findByPublisherIdAndDeletedAtIsNull(publisherId);
+    public List<Message> minhas(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("authenticatedUserId");
+        return userId != null ? messageService.minhas(userId) : List.of();
     }
 }

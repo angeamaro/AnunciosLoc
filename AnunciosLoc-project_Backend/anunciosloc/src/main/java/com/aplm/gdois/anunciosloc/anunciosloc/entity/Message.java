@@ -1,15 +1,21 @@
 package com.aplm.gdois.anunciosloc.anunciosloc.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "messages")
 public class Message {
 
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    private UUID id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -21,10 +27,10 @@ public class Message {
     private Long publisherId;
 
     @Column(name = "delivery_mode", nullable = false, length = 20)
-    private String deliveryMode; // centralized ou decentralized
+    private String deliveryMode = "centralized";
 
     @Column(name = "policy_type", length = 20)
-    private String policyType = "none"; // whitelist, blacklist, none
+    private String policyType = "none";
 
     @Column(name = "time_start")
     private LocalDateTime timeStart;
@@ -33,15 +39,15 @@ public class Message {
     private LocalDateTime timeEnd;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    // Construtor vazio (JPA precisa)
+    // JPA precisa
     public Message() {}
 
-    // Getters e Setters
+    // Getters e Setters (TODOS!)
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 
@@ -67,6 +73,8 @@ public class Message {
     public void setTimeEnd(LocalDateTime timeEnd) { this.timeEnd = timeEnd; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
     public LocalDateTime getDeletedAt() { return deletedAt; }
     public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
 }
