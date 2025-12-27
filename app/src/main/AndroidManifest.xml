@@ -11,6 +11,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Para localização em background (opcional, caso uses geolocalização contínua) -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- WiFi Direct / P2P para Android 13+ -->
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES" 
+        android:usesPermissionFlags="neverForLocation" />
+    <!-- Para versões anteriores ao Android 13 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" 
+        android:maxSdkVersion="32" />
 
     <application
         android:name=".App"
@@ -131,6 +137,27 @@
             android:name=".ui.view.PoliciesActivity"
             android:exported="false"
             android:parentActivityName=".ui.view.MenuOptionsActivity" />
+
+        <!-- P2P Announcement Activities -->
+        <activity
+            android:name=".ui.view.P2PAnnouncementsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MainActivity" />
+
+        <activity
+            android:name=".ui.view.SimulateP2PReceiveActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.MainActivity" />
+
+        <activity
+            android:name=".ui.view.P2PAnnouncementDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.P2PAnnouncementsActivity" />
+
+        <activity
+            android:name=".ui.view.P2PDiscoveryActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.view.P2PAnnouncementDetailActivity" />
 
     </application>
 
