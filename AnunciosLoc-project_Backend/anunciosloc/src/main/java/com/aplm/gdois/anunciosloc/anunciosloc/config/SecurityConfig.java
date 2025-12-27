@@ -17,7 +17,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())  // Desabilita CSRF (para APIs REST)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()  // Libera register e login
-                .anyRequest().authenticated()                 // Outros precisam de login
+                .requestMatchers("/api/**").permitAll()        // Libera todas as APIs (temporário para desenvolvimento)
+                .requestMatchers("/error").permitAll()         // Libera página de erro
+                .anyRequest().permitAll()                      // Permite todas as requisições (temporário)
             );
 
         return http.build();
