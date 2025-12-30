@@ -28,8 +28,6 @@ public class User {
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
-    
-
     @Column(unique = true, nullable = false)
     private String username;
 
